@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        android:dialogTitle="Choose a App Language"
+        android:entries="@array/languages"
+        android:entryValues="@array/languages_values"
+        android:icon="@drawable/ic_language_24"
+        android:key="@string/local_key"
+        android:title="App Language" />
+
+    <PreferenceCategory android:title="@string/pref_category_links">
+        <Preference
+            android:icon="@drawable/ic_linkedin_logo_24"
+            android:title="LinkedIn"
+            app:summary="www.linkedin.com/in/vrishab-shetty-6bb853190">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.linkedin.com/in/vrishab-shetty-6bb853190/" />
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

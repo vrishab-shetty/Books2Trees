@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MainColors">
+        <attr name="colorPrimary" format="color" />
+        <attr name="colorOnPrimary" format="color"/>
+        <attr name="colorAccent" format="color"/>
+
+        <attr name="primaryWhiteBackground" format="color" />
+        <attr name="boxItemBackground" format="color" />
+
+        <attr name="textColor" format="color" />
+        <attr name="grayTextColor" format="color" />
+        <attr name="iconColor" format="color" />
+        <attr name="white" format="color" />
+        <attr name="black" format="color" />
+    </declare-styleable>
+</resources>

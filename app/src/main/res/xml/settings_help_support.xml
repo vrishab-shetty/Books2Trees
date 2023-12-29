@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_category_apps">
+        <Preference
+            android:title="Check for Update"
+            android:summary="1.0.0"
+            android:icon="@drawable/ic_system_update_24"/>
+    </PreferenceCategory>
+</PreferenceScreen>

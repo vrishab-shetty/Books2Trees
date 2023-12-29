@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="data"
+            type="com.company.books2trees.presentation.sign_in.UserData" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/settings_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="20dp"
+                    android:paddingVertical="30dp"
+                    android:visibility="visible"
+                    tools:ignore="RtlSymmetry">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:cardCornerRadius="25dp">
+
+                        <ImageView
+                            android:id="@+id/settings_profile_pic"
+                            app:imageUrl="@{data.profilePictureUrl}"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/settings_profile_text"
+                        android:text="@{data.username}"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        tools:text="Name"/>
+
+                    <ImageButton
+                        android:id="@+id/sign_out_btn"
+                        android:paddingHorizontal="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:backgroundTint="?white"
+                        android:src="@drawable/ic_logout_24" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/settings_general"
+                    style="@style/SettingsItem"
+                    android:nextFocusDown="@+id/settings_help"
+                    android:text="@string/settings_general" />
+
+                <TextView
+                    android:id="@+id/settings_account"
+                    style="@style/SettingsItem"
+                    android:nextFocusDown="@+id/settings_help"
+                    android:text="@string/settings_account" />
+
+                <TextView
+                    android:id="@+id/settings_help"
+                    style="@style/SettingsItem"
+                    android:nextFocusUp="@id/settings_account"
+                    android:nextFocusDown="@id/settings_updates"
+                    android:text="@string/settings_help" />
+
+                <TextView
+                    android:id="@+id/settings_updates"
+                    style="@style/SettingsItem"
+                    android:nextFocusUp="@id/settings_help"
+                    android:nextFocusDown="@id/settings_privacy_policy"
+                    android:text="@string/settings_updates" />
+
+                <TextView
+                    android:id="@+id/settings_privacy_policy"
+                    style="@style/SettingsItem"
+                    android:nextFocusUp="@id/settings_updates"
+                    android:nextFocusDown="@id/settings_updates"
+                    android:text="@string/settings_policies" />
+
+                <TextView
+                    android:id="@+id/settings_about_us"
+                    style="@style/SettingsItem"
+                    android:nextFocusUp="@id/settings_privacy_policy"
+                    android:text="@string/settings_about_us" />
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

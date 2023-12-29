@@ -1,0 +1,22 @@
+<resources>
+    <color name="seed">#97480e</color>
+
+    <color name="colorPrimary">#97480E</color>
+    <color name="colorPrimarySecond">@color/colorPrimary</color>
+
+    <color name="colorBackground">#FFFBFF</color>
+    <color name="primaryWhiteBackground">@color/white</color>
+
+    <color name="textColor">#ff000000</color>
+    <color name="whiteText">@color/white</color>
+    <color name="blackText">@color/black</color>
+    <color name="grayTextColor">#ff9ba0a4</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="black">#ff000000</color>
+    <color name="white">#ffffffff</color>
+
+    <color name="iconColor">@color/blackText</color>
+
+
+</resources>

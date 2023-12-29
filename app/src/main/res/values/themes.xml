@@ -1,0 +1,186 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <item name="colorAccent">?colorPrimary</item>
+        <item name="primaryWhiteBackground">@color/primaryWhiteBackground</item>
+        <item name="textColor">@color/textColor</item>
+        <item name="grayTextColor">@color/grayTextColor</item>
+        <item name="boxItemBackground">@color/transparent</item>
+        <item name="iconColor">@color/iconColor</item>
+        <item name="white">@color/white</item>
+        <item name="black">@color/black</item>
+
+
+        <!-- To set status and nav Color -->
+        <item name="android:statusBarColor">?boxItemBackground</item>
+        <item name="android:navigationBarColor">?colorPrimary</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Themes and Styles-->
+        <item name="android:textViewStyle">@style/AppTextViewStyle</item>
+        <item name="android:editTextStyle">@style/AppEditStyle</item>
+        <item name="android:buttonStyle">@style/AppButtonStyle</item>
+        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+
+        <item name="boxBackgroundColor">?boxItemBackground</item>
+        <item name="backgroundColor">?android:colorBackground</item>
+        <item name="iconTint">?iconColor</item>
+        <item name="textFillColor">?textColor</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:textColor">?textColor</item>
+        <item name="android:textColorHint">?grayTextColor</item>
+
+    </style>
+
+    <!-- Custom TextView Style -->
+    <style name="AppTextViewStyle" parent="@android:style/Widget.TextView">
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+
+    <style name="AppTextViewStyle.NoCheckLabel">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_selection_color</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:foreground">?selectableItemBackgroundBorderless</item>
+        <item name="android:minHeight">?listPreferredItemHeightSmall</item>
+        <item name="android:drawablePadding">20dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+
+    </style>
+
+    <style name="AppTextViewStyle.CheckLabel" parent="AppTextViewStyle.NoCheckLabel">
+        <item name="android:checkable">true</item>
+        <item name="android:checkMark">?android:listChoiceIndicatorSingle</item>
+        <item name="drawableStartCompat">@drawable/ic_check_24</item>
+    </style>
+
+    <!-- Custom EditView Style -->
+    <style name="AppEditStyle" parent="@android:style/Widget.EditText">
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+
+    <!-- Custom Button Style-->
+    <style name="AppButtonStyle" parent="@android:style/Widget.Holo.Button">
+        <item name="android:fontFamily">@font/google_sans</item>
+    </style>
+
+    <!-- Custom Preference Theme -->
+    <style name="AppPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
+        <item name="android:layout">@layout/settings_top</item>
+    </style>
+
+    <!-- Custom Bottom Navigation Bar Theme -->
+    <style name="Widget.Books2Trees.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/Books2Trees.Custom.Indicator</item>
+        <item name="itemTextColor">?white</item>
+    </style>
+
+    <!-- Custom BottomSheet Theme -->
+    <style name="AppBottomSheetDialogTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle">
+        <item name="android:background">@drawable/rounded_dialog</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="backgroundTint">?primaryWhiteBackground</item>
+        <item name="behavior_hideable">true</item>
+        <item name="behavior_peekHeight">512dip</item>
+        <item name="behavior_skipCollapsed">true</item>
+        <item name="shapeAppearance">@null</item>
+        <item name="shapeAppearanceOverlay">@null</item>
+    </style>
+
+    <!-- Custom FAB -->
+    <style name="AppExtendedFloatingActionButton">
+        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="backgroundTint">?colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="iconTint">?colorOnPrimary</item>
+        <item name="elevation">0.0dip</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_gravity">end|bottom|center</item>
+    </style>
+
+
+    <!-- Custom Indicator Theme -->
+    <style name="Books2Trees.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@android:color/white</item>
+    </style>
+
+    <!-- Custom Tab Layout Theme    -->
+    <style name="Theme.Widget.Tabs" parent="Widget.MaterialComponents.TabLayout.Colored">
+    </style>
+
+    <style name="TabNoCaps" parent="@style/TextAppearance.Design.Tab">
+        <item name="fontFamily">@font/google_sans</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <!--    Custom Popup Style -->
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:backgroundTint">?attr/primaryWhiteBackground</item>
+    </style>
+
+    <!-- Component Style -->
+    <style name="SettingsItem">
+        <item name="android:textAppearance">?android:textAppearanceListItemSmall</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50sp</item>
+        <item name="android:foreground">?selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="drawableEndCompat">@drawable/ic_keyboard_arrow_right_24</item>
+    </style>
+
+    <style name="BookListHeading">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:foreground">?selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+        <item name="android:textStyle">bold</item>
+        <item name="drawableEndCompat">@drawable/ic_arrow_forward_24</item>
+    </style>
+
+    <style name="BottomSheetHeading">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginEnd">50dip</item>
+    </style>
+
+</resources>
