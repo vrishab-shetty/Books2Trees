@@ -63,12 +63,12 @@ class BookRepository(private val context: Context) {
         delay(1000)
 
         val popularItems =
-//            popularItems
-             BookFetcher.fetchPopularItems()
+            popularItems
+//            BookFetcher.fetchPopularItems()
 
         val awardedItems =
-//            awardedItems
-             BookFetcher.fetchAwardedItems()
+            awardedItems
+//            BookFetcher.fetchAwardedItems()
 
         val result: MutableMap<Int, List<BookModel>> = mutableMapOf()
 
@@ -100,7 +100,6 @@ class BookRepository(private val context: Context) {
 
     }
 
-    private val itemsCache = LruCache<Int, List<BookModel>>(5)
     fun loadRecent(): Flow<List<RecentItem>> {
         val db = BookDatabase[context]
 
@@ -112,24 +111,20 @@ class BookRepository(private val context: Context) {
         val DEFAULT_GENRE = GenreList.All.name
         private val searchCache = LruCache<Pair<String, String>, List<BookModel>>(5)
 
-        suspend fun search(query: String, filter: String?): List<BookModel> {
+        suspend fun search(query: String, filter: String?): List<BookModel> =
+            withContext(Dispatchers.IO) {
+                delay(1000)
+                searchResult
+
+//                var results: List<BookModel>?
 //
-//            delay(1000)
-//            return searchResult
-
-            var results: List<BookModel>?
-//             Change in filter will also trigger this hence the filter will be not be applied
-
-            synchronized(searchCache) {
-                results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
+//                synchronized(searchCache) {
+//                    results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
+//                }
+//                results ?: BookFetcher.searchBook(query, filter)
+//                    .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
             }
-            return results ?:
-            BookFetcher.searchBook(query, filter)
-                .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
-        }
 
-//    fun findItemById(id: String): BookModel? {
-//
-//    }
+
     }
 }

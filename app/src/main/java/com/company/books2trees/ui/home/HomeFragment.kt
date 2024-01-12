@@ -3,7 +3,6 @@ package com.company.books2trees.ui.home
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -12,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.company.books2trees.MainActivity
 import com.company.books2trees.R
 import com.company.books2trees.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentHomeBinding
@@ -37,6 +37,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as MainActivity).loadAd()
 
         val pageListAdapter = HomeParentItemAdapterPreview(
             mutableListOf(),
@@ -130,10 +132,17 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     override fun openBook(model: BookModel) {
         vm.onBookClicked(model)
         // Open Book from URL
-        startActivity(Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(model.url)
-        })
-        Log.i("TAG", "openBook: ")
+
+        (requireActivity() as MainActivity).apply {
+            if (isInitialized()) {
+                showAd {
+                    startActivity(Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(model.url)
+                    })
+                }
+            }
+        }
+
 
     }
 

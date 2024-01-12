@@ -92,7 +92,7 @@ object PdfRepository {
 
     }
 
-    suspend fun renderSinglePage(
+    private suspend fun renderSinglePage(
         context: Context,
         fileUri: Uri,
         width: Int,

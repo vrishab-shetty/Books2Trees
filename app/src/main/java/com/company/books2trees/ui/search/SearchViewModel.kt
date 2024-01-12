@@ -36,10 +36,13 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     fun search(query: String) {
         this.query = query
         _result.value = ResultViewState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        _selectedFilter
+        viewModelScope.launch(Dispatchers.Main) {
             _result.postValue(
                 try {
-                    val result = BookRepository.search(query, selectedFilter.value)
+                    val result = BookRepository.search(
+                        query,
+                        selectedFilter.value)
                     ResultViewState.Content(result)
                 } catch (t: Throwable) {
                     ResultViewState.Error(t)
@@ -78,7 +81,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 //      To add this feature, the caching need to remove
-//        query?.let{ search(it) }
+        query?.let{ search(it) }
     }
 
 

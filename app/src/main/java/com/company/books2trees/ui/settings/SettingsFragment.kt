@@ -56,8 +56,8 @@ class SettingsFragment :
                                 },
                                 positiveButtonText = R.string.sign_out,
                                 negativeButtonText = R.string.cancel_btn_caption,
-                                message = R.string.sign_out,
-                                title = R.string.sign_out_dialog
+                                message = R.string.sign_out_dialog,
+                                title = R.string.sign_out
                             ).show()
 
                         }
