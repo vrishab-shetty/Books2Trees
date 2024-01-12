@@ -9,6 +9,7 @@ import com.company.books2trees.OnViewProfile
 import com.company.books2trees.R
 import com.company.books2trees.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentSettingsBinding
+import com.company.books2trees.ui.common.BasicAlertDialog
 import com.company.books2trees.ui.sign_in.SignInActivity
 import com.company.books2trees.utils.UIHelper.navigateTo
 import com.company.books2trees.utils.UIHelper.setUpToolbar
@@ -44,10 +45,21 @@ class SettingsFragment :
                     binding.apply {
                         data = userData
                         signOutBtn.setOnClickListener {
-                            activity.signOut {
-                                startActivity(Intent(activity, SignInActivity::class.java))
-                                activity.finish()
-                            }
+
+                            BasicAlertDialog(
+                                requireActivity(),
+                                onPositiveButtonClick = {
+                                    activity.signOut {
+                                        startActivity(Intent(activity, SignInActivity::class.java))
+                                        activity.finish()
+                                    }
+                                },
+                                positiveButtonText = R.string.sign_out,
+                                negativeButtonText = R.string.cancel_btn_caption,
+                                message = R.string.sign_out,
+                                title = R.string.sign_out_dialog
+                            ).show()
+
                         }
                         executePendingBindings()
                     }

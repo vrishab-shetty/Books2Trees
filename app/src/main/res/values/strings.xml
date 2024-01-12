@@ -40,5 +40,5 @@
     <string name="default_web_client_id">303964748193-vnlsc9is7r1nhsq149ajauhu2m91d57p.apps.googleusercontent.com</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
-
+    <string name="sign_out_dialog">Are you sure, do you want to logout?</string>
 </resources>
