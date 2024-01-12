@@ -62,11 +62,13 @@ class BookRepository(private val context: Context) {
 
         delay(1000)
 
-        val popularItems = popularItems
-            // BookFetcher.fetchPopularItems()
+        val popularItems =
+//            popularItems
+             BookFetcher.fetchPopularItems()
 
-        val awardedItems = awardedItems
-            // BookFetcher.fetchAwardedItems()
+        val awardedItems =
+//            awardedItems
+             BookFetcher.fetchAwardedItems()
 
         val result: MutableMap<Int, List<BookModel>> = mutableMapOf()
 
@@ -111,19 +113,19 @@ class BookRepository(private val context: Context) {
         private val searchCache = LruCache<Pair<String, String>, List<BookModel>>(5)
 
         suspend fun search(query: String, filter: String?): List<BookModel> {
+//
+//            delay(1000)
+//            return searchResult
 
-            delay(1000)
-            return searchResult
+            var results: List<BookModel>?
+//             Change in filter will also trigger this hence the filter will be not be applied
 
-//            var results: List<BookModel>?
-            // Change in filter will also trigger this hence the filter will be not be applied
-
-//            synchronized(searchCache) {
-//                results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
-//            }
-//            return results ?:
-//            BookFetcher.searchBook(query, filter)
-//                .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
+            synchronized(searchCache) {
+                results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
+            }
+            return results ?:
+            BookFetcher.searchBook(query, filter)
+                .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
         }
 
 //    fun findItemById(id: String): BookModel? {

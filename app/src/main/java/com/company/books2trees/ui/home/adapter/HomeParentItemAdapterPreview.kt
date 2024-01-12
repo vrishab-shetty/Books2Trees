@@ -123,7 +123,7 @@ class HomeParentItemAdapterPreview(
 
 
         private fun updateResume(list: List<BookModel>) {
-            resumeHolder.isVisible = list.isNotEmpty()
+            resumeHolder.visibility = if(list.isNotEmpty()) View.VISIBLE else View.GONE
             resumeListAdapter.submitList(list)
         }
 
