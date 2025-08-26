@@ -1,3 +1,13 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# IDE caches and indexes
+caches/
+
+# Deployment target history
+deploymentTargetDropDown.xml
+deploymentTargetSelector.xml
+
+# Experimental rendering settings
+render.experimental.xml

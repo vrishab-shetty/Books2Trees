@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.company.books2trees" />
+                  <option name="mobileSdkAppId" value="1:303964748193:android:498062042b15dd5308b3e0" />
+                  <option name="projectId" value="books2trees-eae84" />
+                  <option name="projectNumber" value="303964748193" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
