@@ -1,21 +1,22 @@
 package com.company.books2trees.ui.home
 
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.company.books2trees.MainActivity
 import com.company.books2trees.R
 import com.company.books2trees.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentHomeBinding
 import com.company.books2trees.ui.AutoFitRecyclerView
+import com.company.books2trees.ui.common.AdHandler
 import com.company.books2trees.ui.common.BookListAdapter
 import com.company.books2trees.ui.common.DefaultBookViewType
 import com.company.books2trees.ui.home.adapter.HomeParentItemAdapterPreview
@@ -33,12 +34,22 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     OnBookClicked {
 
     private val vm: HomeViewModel by viewModel()
+    private var adManager: AdHandler? = null
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is AdHandler) {
+            adManager = context
+        } else {
+            throw RuntimeException("$context must implement AdManager")
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (requireActivity() as MainActivity).loadAd()
+        adManager?.loadAd()
 
         val pageListAdapter = HomeParentItemAdapterPreview(
             mutableListOf(),
@@ -131,13 +142,13 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     // UI Action triggers the call
     override fun openBook(model: BookModel) {
         vm.onBookClicked(model)
-        // Open Book from URL
 
-        (requireActivity() as MainActivity).apply {
+        // Open Book from URL
+        adManager?.apply {
             if (isInitialized()) {
                 showAd {
                     startActivity(Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(model.url)
+                        data = model.url?.toUri()
                     })
                 }
             }
@@ -146,5 +157,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
     }
 
-
+    override fun onDetach() {
+        super.onDetach()
+        adManager = null
+    }
 }

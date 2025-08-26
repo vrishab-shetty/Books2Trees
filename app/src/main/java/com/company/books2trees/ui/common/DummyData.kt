@@ -3,6 +3,7 @@ package com.company.books2trees.ui.common
 import com.company.books2trees.ui.models.AwardedBookModel
 import com.company.books2trees.ui.models.BookModel
 import com.company.books2trees.ui.models.PopularBookModel
+import com.company.books2trees.ui.models.SimpleBookModel
 
 val popularItems: List<BookModel> = listOf(
     PopularBookModel(
@@ -56,7 +57,7 @@ val awardedItems: List<BookModel> = listOf(
 )
 
 val searchResult: List<BookModel> = listOf(
-    BookModel(
+    SimpleBookModel(
         id = "52861201",
         name = "From Blood and Ash",
         extras = "Jennifer L. Armentrou",

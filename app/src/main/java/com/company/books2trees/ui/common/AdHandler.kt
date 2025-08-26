@@ -1,6 +1,6 @@
 package com.company.books2trees.ui.common
 
-interface OnShowAds {
+interface AdHandler {
     fun isInitialized(): Boolean
 
     fun loadAd()

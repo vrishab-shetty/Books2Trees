@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.company.books2trees.ui.models.BookConverter
 import com.company.books2trees.ui.models.BookModel
+import com.company.books2trees.ui.models.SimpleBookModel
 import com.company.books2trees.ui.profile.LibraryPageItem.CategoryId
 
 @Entity(tableName = "library")
@@ -18,9 +19,9 @@ data class LibraryItem(
 
 
     override fun toBookModel(): BookModel {
-        return BookModel(
+        return SimpleBookModel(
             id,
-            title ?: "",
+            title,
             imgUrl,
             url,
             null
