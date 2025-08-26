@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.company.books2trees.R
 import com.company.books2trees.databinding.ItemHomePageListBinding
 import com.company.books2trees.ui.common.BookListAdapter
-import com.company.books2trees.ui.common.RecentBookViewType
 import com.company.books2trees.ui.home.HomePageList
 import com.company.books2trees.ui.home.HomeViewModel
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
@@ -42,7 +40,7 @@ class HomeParentItemAdapterPreview(
         private const val VIEW_TYPE_ITEM = 1
     }
 
-    val headItems = 1;
+    val headItems = 1
     private var viewPool: RecycledViewPool? = null
 
     init {
@@ -53,7 +51,7 @@ class HomeParentItemAdapterPreview(
         return when (viewType) {
             VIEW_TYPE_HEADER -> {
                 HeaderViewHolder(ItemHomePageListBinding.inflate(layoutInflater, parent, false))
-                    .apply {  setViewPool(viewPool) }
+                    .apply { setViewPool(viewPool) }
             }
 
             VIEW_TYPE_ITEM -> {
@@ -98,7 +96,6 @@ class HomeParentItemAdapterPreview(
         ViewHolder(binding.root), OnBookLongPressed {
 
         private var resumeListAdapter: BookListAdapter = BookListAdapter(
-            RecentBookViewType,
             layoutInflater, onClickBook, this
         )
 
@@ -113,9 +110,8 @@ class HomeParentItemAdapterPreview(
                 setOnClickListener {
                     onClickListHeading(
                         (it as TextView).text.toString(),
-                        (resumeRecyclerView.adapter as? BookListAdapter)?.let { adapter ->
-                            adapter.currentList
-                        } ?: error("BookListAdapter is not initialized")
+                        (resumeRecyclerView.adapter as? BookListAdapter)?.currentList
+                            ?: error("BookListAdapter is not initialized")
                     )
                 }
             }
@@ -123,7 +119,7 @@ class HomeParentItemAdapterPreview(
 
 
         private fun updateResume(list: List<BookModel>) {
-            resumeHolder.visibility = if(list.isNotEmpty()) View.VISIBLE else View.GONE
+            resumeHolder.visibility = if (list.isNotEmpty()) View.VISIBLE else View.GONE
             resumeListAdapter.submitList(list)
         }
 

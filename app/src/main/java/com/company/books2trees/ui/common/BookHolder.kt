@@ -12,13 +12,15 @@ open class BookHolder(
     private val onItemPressed: OnBookLongPressed?
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private var currentModel: BookModel? = null
+
     init {
         binding.root.setOnClickListener {
-            binding.model?.let { onItemClick.openBook(it) }
+            currentModel?.let { onItemClick.openBook(it) }
         }
 
         binding.root.setOnLongClickListener {itemView ->
-            binding.model?.let {
+            currentModel?.let {
                 onItemPressed?.showOptionMenu(it, itemView)
             }
             onItemPressed != null
@@ -26,6 +28,7 @@ open class BookHolder(
     }
 
     fun bind(model: BookModel) {
+        this.currentModel = model
         binding.model = model
         binding.executePendingBindings()
     }

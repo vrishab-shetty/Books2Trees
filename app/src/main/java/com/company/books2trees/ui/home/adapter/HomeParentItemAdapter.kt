@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
@@ -12,16 +11,12 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.company.books2trees.R
 import com.company.books2trees.databinding.ItemHomePageListBinding
-import com.company.books2trees.ui.common.AwardedBookViewType
 import com.company.books2trees.ui.common.BookListAdapter
-import com.company.books2trees.ui.common.DefaultBookViewType
-import com.company.books2trees.ui.common.PopularBookViewType
 import com.company.books2trees.ui.home.HomePageList
 import com.company.books2trees.ui.home.HomeViewModel
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
 import com.company.books2trees.ui.home.callbacks.OnBookLongPressed
 import com.company.books2trees.ui.models.BookModel
-import com.company.books2trees.ui.profile.LibraryPageItem
 import com.company.books2trees.ui.profile.LibraryPageItem.CategoryId
 import com.company.books2trees.utils.UIHelper.popupMenuNoIcons
 
@@ -66,7 +61,7 @@ open class HomeParentItemAdapter(
         items.addAll(newList)
 
         val delta = if (this@HomeParentItemAdapter is HomeParentItemAdapterPreview)
-            headItems else 0;
+            headItems else 0
 
         diffResult.dispatchUpdatesTo(object : ListUpdateCallback {
             override fun onInserted(position: Int, count: Int) {
@@ -120,7 +115,7 @@ open class HomeParentItemAdapter(
         // diffResult.dispatchUpdatesTo(this)
     }
 
-    override fun getItemCount() = items.size;
+    override fun getItemCount() = items.size
 
     override fun getItemId(position: Int): Long {
         return items[position].name.toLong()
@@ -132,12 +127,7 @@ open class HomeParentItemAdapter(
         private var recyclerView = binding.bookList
         val title: TextView = binding.books
         fun update(list: HomePageList) {
-
-            val title = list.name
-
-            if (recyclerView.adapter == null) {
-                setUpAdapter(title)
-            }
+            setUpAdapter()
 
             (recyclerView.adapter as? BookListAdapter)?.apply {
                 submitList(list.list)
@@ -151,45 +141,28 @@ open class HomeParentItemAdapter(
 
             val title = items.name
 
-            setUpAdapter(title)
+            setUpAdapter()
 
             binding.books.apply {
                 text = resources.getString(title)
                 setOnClickListener {
                     onClickListHeading(
                         (it as TextView).text.toString(),
-                        (recyclerView.adapter as? BookListAdapter)?.let { adapter ->
-                            adapter.currentList
-                        } ?: error("BookListAdapter is not initialized")
+                        (recyclerView.adapter as? BookListAdapter)?.currentList
+                            ?: error("BookListAdapter is not initialized")
                     )
                 }
             }
+
             update(items)
         }
 
 
-        private fun setUpAdapter(@StringRes title: Int) {
+        private fun setUpAdapter() {
 
-            recyclerView.adapter = when (title) {
-                R.string.popular_books_caption -> BookListAdapter(
-                    PopularBookViewType,
-                    layoutInflater, onClickBook,
-                    this
-                )
-
-                R.string.awarded_books_caption -> BookListAdapter(
-                    AwardedBookViewType,
-                    layoutInflater, onClickBook,
-                    this
-                )
-
-                else -> BookListAdapter(
-                    DefaultBookViewType,
-                    layoutInflater, onClickBook,
-                    null
-                )
-
-            }
+            recyclerView.adapter = recyclerView.adapter ?: BookListAdapter(
+                layoutInflater, onClickBook, this
+            )
         }
 
         fun setViewPool(viewPool: RecyclerView.RecycledViewPool?) {
@@ -201,7 +174,7 @@ open class HomeParentItemAdapter(
             itemView.popupMenuNoIcons(options.mapIndexed { index, value ->
                 Pair(index, value)
             }) {
-                when(itemId) {
+                when (itemId) {
                     0 -> {
                         viewModel.insertToLibrary(model, CategoryId.PlanToRead)
                     }

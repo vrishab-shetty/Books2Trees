@@ -2,8 +2,6 @@ package com.company.books2trees.repos
 
 import android.content.Context
 import android.util.LruCache
-import com.company.books2trees.ui.common.AwardedBookViewType
-import com.company.books2trees.ui.common.PopularBookViewType
 import com.company.books2trees.ui.common.awardedItems
 import com.company.books2trees.ui.common.popularItems
 import com.company.books2trees.ui.common.searchResult
@@ -11,6 +9,8 @@ import com.company.books2trees.ui.home.database.RecentItem
 import com.company.books2trees.ui.models.BookModel
 import com.company.books2trees.ui.profile.database.BookDatabase
 import com.company.books2trees.utils.UIHelper
+import com.company.books2trees.utils.UIHelper.AWARDED_BOOKS_POSITION
+import com.company.books2trees.utils.UIHelper.POPULAR_BOOKS_POSITION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -54,7 +54,6 @@ class BookRepository(private val context: Context) {
 
     }
 
-
     //     Calls the required requests
     suspend fun fetchItems() = withContext(
         Dispatchers.IO
@@ -72,8 +71,8 @@ class BookRepository(private val context: Context) {
 
         val result: MutableMap<Int, List<BookModel>> = mutableMapOf()
 
-        result[UIHelper.getHomeListNames()[PopularBookViewType]] = popularItems
-        result[UIHelper.getHomeListNames()[AwardedBookViewType]] = awardedItems
+        result[UIHelper.getHomeListNames()[POPULAR_BOOKS_POSITION]] = popularItems
+        result[UIHelper.getHomeListNames()[AWARDED_BOOKS_POSITION]] = awardedItems
 
         result
     }

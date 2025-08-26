@@ -1,12 +1,12 @@
 package com.company.books2trees.ui.profile
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.widget.SearchView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.ViewBindingFragment
@@ -58,7 +58,7 @@ class ProfileFragment :
                     }
 
                     override fun onQueryTextChange(newText: String?): Boolean {
-                        if(newText.isNullOrEmpty())
+                        if (newText.isNullOrEmpty())
                             vm.onSearchClosed()
                         return true
                     }
@@ -155,7 +155,7 @@ class ProfileFragment :
         // Open Book from URL
         model.url?.let {
             startActivity(Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(it)
+                data = it.toUri()
             })
         }
 
