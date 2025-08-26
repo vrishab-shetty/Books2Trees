@@ -1,21 +1,22 @@
 package com.company.books2trees.ui.search
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.widget.SearchView
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.company.books2trees.R
 import com.company.books2trees.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentSearchBinding
-import com.company.books2trees.ui.common.BookListAdapter
-import com.company.books2trees.ui.common.SearchResultViewType
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
 import com.company.books2trees.ui.models.BookModel
+import com.company.books2trees.ui.search.adapter.SearchResultAdapter
 import com.company.books2trees.utils.UIHelper
 import com.company.books2trees.utils.UIHelper.hideKeyboard
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -25,14 +26,14 @@ import com.google.android.material.button.MaterialButton
 class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate), OnBookClicked {
 
     private val vm: SearchViewModel by viewModels()
-    private lateinit var searchResultAdapter: BookListAdapter
+    private lateinit var searchResultAdapter: SearchResultAdapter
     private var filterListView: ListView? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         searchResultAdapter =
-            BookListAdapter(SearchResultViewType, layoutInflater, this, null)
+            SearchResultAdapter(layoutInflater, this@SearchFragment)
 
         useBinding { binding ->
             binding.searchResultList.apply {
@@ -156,6 +157,12 @@ class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearch
         // ...
         Log.i("TAG", "openBook: ")
         vm.onBookClicked(model)
+
+        model.url?.let {
+            startActivity(Intent(Intent.ACTION_VIEW).apply {
+                data = it.toUri()
+            })
+        }
     }
 
     override fun onDestroyView() {

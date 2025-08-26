@@ -25,6 +25,8 @@ import com.company.books2trees.R
 import com.google.android.material.appbar.MaterialToolbar
 
 object UIHelper {
+    const val POPULAR_BOOKS_POSITION = 0
+    const val AWARDED_BOOKS_POSITION = 1
 
     fun getHomeListNames() = arrayListOf(
         R.string.popular_books_caption,

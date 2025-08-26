@@ -18,7 +18,6 @@ import com.company.books2trees.databinding.FragmentHomeBinding
 import com.company.books2trees.ui.AutoFitRecyclerView
 import com.company.books2trees.ui.common.AdHandler
 import com.company.books2trees.ui.common.BookListAdapter
-import com.company.books2trees.ui.common.DefaultBookViewType
 import com.company.books2trees.ui.home.adapter.HomeParentItemAdapterPreview
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
 import com.company.books2trees.ui.home.viewState.HomeViewState
@@ -127,7 +126,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 this@apply.findViewById<AutoFitRecyclerView>(R.id.home_expanded_recycler)
             recyclerView?.apply {
                 adapter = BookListAdapter(
-                    DefaultBookViewType,
                     layoutInflater,
                     this@HomeFragment,
                     null
