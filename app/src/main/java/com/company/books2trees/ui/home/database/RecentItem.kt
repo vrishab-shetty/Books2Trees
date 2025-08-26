@@ -4,10 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.company.books2trees.ui.models.BookConverter
 import com.company.books2trees.ui.models.BookModel
-import com.company.books2trees.ui.profile.LibraryPageItem
+import com.company.books2trees.ui.models.SimpleBookModel
 
 @Entity("recent")
-class RecentItem: BookConverter {
+class RecentItem : BookConverter {
 
     @PrimaryKey
     var id: String = ""
@@ -17,7 +17,7 @@ class RecentItem: BookConverter {
     var extras: String? = null
 
     override fun toBookModel(): BookModel {
-        return BookModel(
+        return SimpleBookModel(
             id,
             title ?: "",
             imgUrl,
@@ -30,17 +30,21 @@ class RecentItem: BookConverter {
         return "RecentItem(id='$id', title=$title, imgUrl=$imgUrl, url=$url, extras=$extras)"
     }
 
+    /*** Comment for future use
+
     companion object {
-        fun fromBookModel(model: BookModel): RecentItem {
-            val instance = RecentItem()
+    fun fromBookModel(model: BookModel): RecentItem {
+    val instance = RecentItem()
 
-            instance.id = model.id
-            instance.title = model.name
-            instance.imgUrl = model.cover
-            instance.url = model.url
-            instance.extras = model.extras
+    instance.id = model.id
+    instance.title = model.name
+    instance.imgUrl = model.cover
+    instance.url = model.url
+    instance.extras = model.extras
 
-            return instance
-        }
+    return instance
     }
+    }
+
+     ***/
 }

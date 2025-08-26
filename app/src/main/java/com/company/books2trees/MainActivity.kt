@@ -10,7 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.company.books2trees.databinding.ActivityMainBinding
 import com.company.books2trees.presentation.sign_in.GoogleAuthUiClient
-import com.company.books2trees.ui.common.OnShowAds
+import com.company.books2trees.ui.common.AdHandler
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
@@ -20,7 +20,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), OnViewProfile, OnShowAds {
+class MainActivity : AppCompatActivity(), OnViewProfile, AdHandler {
 
     private var TAG = "MainActivity"
 
@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity(), OnViewProfile, OnShowAds {
     }
 
     override fun isInitialized(): Boolean = isMobileAdsInitialized
+
     override fun loadAd() {
         val adRequest = AdRequest.Builder().build()
         RewardedAd.load(
@@ -92,7 +93,7 @@ class MainActivity : AppCompatActivity(), OnViewProfile, OnShowAds {
 
         rewardedAd?.let { ad ->
 
-            ad.fullScreenContentCallback = object: FullScreenContentCallback() {
+            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     loadAd()
                 }

@@ -8,12 +8,11 @@ import com.company.books2trees.databinding.ItemBookBinding
 import com.company.books2trees.databinding.ItemSearchResultBinding
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
 import com.company.books2trees.ui.home.callbacks.OnBookLongPressed
-import com.company.books2trees.ui.models.AwardedBookModel
-import com.company.books2trees.ui.models.BookModel
-import com.company.books2trees.ui.models.PopularBookModel
 import com.company.books2trees.ui.home.viewholder.AwardedBookHolder
 import com.company.books2trees.ui.home.viewholder.PopularBookHolder
 import com.company.books2trees.ui.home.viewholder.RecentBookHolder
+import com.company.books2trees.ui.models.BookModel
+import com.company.books2trees.ui.models.BookModelDiffCallback
 import com.company.books2trees.ui.search.viewholder.SearchResultHolder
 
 
@@ -28,7 +27,7 @@ class BookListAdapter(
     private val inflater: LayoutInflater,
     private val onItemClick: OnBookClicked,
     private val onItemLongClick: OnBookLongPressed?,
-) : ListAdapter<BookModel, RecyclerView.ViewHolder>(BookModel.BookModelDiffCallback) {
+) : ListAdapter<BookModel, RecyclerView.ViewHolder>(BookModelDiffCallback) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -76,7 +75,7 @@ class BookListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return viewType;
+        return viewType
     }
 
 

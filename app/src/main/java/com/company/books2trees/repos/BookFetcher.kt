@@ -4,6 +4,7 @@ import android.util.Log
 import com.company.books2trees.ui.models.AwardedBookModel
 import com.company.books2trees.ui.models.BookModel
 import com.company.books2trees.ui.models.PopularBookModel
+import com.company.books2trees.ui.models.SimpleBookModel
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -13,10 +14,11 @@ import java.util.Locale
 
 
 object BookFetcher {
-    
+
     enum class BookExtrasType {
         AUTHORS, PAGES, NONE
     }
+
     private const val API_KEY = "c0b850ea78mshc0c881d0496b98bp11f98fjsn498d1c65d248"
     private const val API_HOST = "hapi-books.p.rapidapi.com"
     private const val TAG = "BookFetcher"
@@ -40,9 +42,9 @@ object BookFetcher {
                 .build()
 
             val response = client.newCall(request).execute()
-            response.body?.string()?.let { jsonString ->
+            response.body.string().let { jsonString ->
                 Log.i(TAG, jsonString)
-                if(response.isSuccessful)
+                if (response.isSuccessful)
                     parsePopularItems(items, jsonString)
                 else throw IOException(jsonString)
             }
@@ -93,7 +95,7 @@ object BookFetcher {
                     .build()
 
                 val response = client.newCall(request).execute()
-                response.body?.string()?.let { jsonString ->
+                response.body.string().let { jsonString ->
                     Log.i(TAG, jsonString)
                     if (response.isSuccessful)
                         parseItems(items, jsonString, BookExtrasType.AUTHORS)
@@ -115,7 +117,7 @@ object BookFetcher {
                     .build()
 
                 val response = client.newCall(request).execute()
-                response.body?.string()?.let { jsonString ->
+                response.body.string().let { jsonString ->
                     Log.i(TAG, jsonString)
                     if (response.isSuccessful)
                         parseItems(items, jsonString, BookExtrasType.NONE)
@@ -157,7 +159,7 @@ object BookFetcher {
 
                     else -> null
                 }
-            val item = BookModel(
+            val item = SimpleBookModel(
                 bookJSONObject.getString("book_id"),
                 bookJSONObject.getString("name"),
                 bookJSONObject.getString("cover"),
@@ -185,7 +187,7 @@ object BookFetcher {
                 .build()
 
             val response = client.newCall(request).execute()
-            response.body?.string()?.let { jsonString ->
+            response.body.string().let { jsonString ->
                 Log.i(TAG, jsonString)
                 if (response.isSuccessful)
                     parseItem(jsonString, BookExtrasType.PAGES)
@@ -213,7 +215,7 @@ object BookFetcher {
 
                 else -> null
             }
-        return BookModel(
+        return SimpleBookModel(
             bookJSONObject.getString("book_id"),
             bookJSONObject.getString("name"),
             bookJSONObject.getString("cover"),
@@ -242,7 +244,7 @@ object BookFetcher {
 
             val response = client.newCall(request).execute()
 
-            response.body?.string()?.let { jsonString ->
+            response.body.string().let { jsonString ->
                 if (response.isSuccessful)
                     parseAwardedItems(items, jsonString)
                 else throw IOException(jsonString)
