@@ -1,7 +1,6 @@
 package com.company.books2trees.ui.models
 
 import androidx.recyclerview.widget.DiffUtil
-import kotlin.jvm.internal.Intrinsics
 
 open class BookModel(
     open val id: String,
@@ -40,7 +39,4 @@ open class BookModel(
 
     }
 
-    enum class Extras {
-        AUTHORS, PAGES, NONE
-    }
 }

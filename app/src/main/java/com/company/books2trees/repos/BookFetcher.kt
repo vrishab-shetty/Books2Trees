@@ -13,7 +13,10 @@ import java.util.Locale
 
 
 object BookFetcher {
-
+    
+    enum class BookExtrasType {
+        AUTHORS, PAGES, NONE
+    }
     private const val API_KEY = "c0b850ea78mshc0c881d0496b98bp11f98fjsn498d1c65d248"
     private const val API_HOST = "hapi-books.p.rapidapi.com"
     private const val TAG = "BookFetcher"
@@ -93,7 +96,7 @@ object BookFetcher {
                 response.body?.string()?.let { jsonString ->
                     Log.i(TAG, jsonString)
                     if (response.isSuccessful)
-                        parseItems(items, jsonString, BookModel.Extras.AUTHORS)
+                        parseItems(items, jsonString, BookExtrasType.AUTHORS)
                     else throw IOException(jsonString)
                 }
             } catch (err: IOException) {
@@ -115,7 +118,7 @@ object BookFetcher {
                 response.body?.string()?.let { jsonString ->
                     Log.i(TAG, jsonString)
                     if (response.isSuccessful)
-                        parseItems(items, jsonString, BookModel.Extras.NONE)
+                        parseItems(items, jsonString, BookExtrasType.NONE)
                     else throw IOException(jsonString)
                 }
             } catch (err: IOException) {
@@ -135,7 +138,7 @@ object BookFetcher {
     private fun parseItems(
         items: MutableList<BookModel>,
         jsonString: String,
-        extras: BookModel.Extras
+        extras: BookExtrasType
     ) {
         val bookArray = JSONArray(jsonString)
 
@@ -143,12 +146,12 @@ object BookFetcher {
             val bookJSONObject: JSONObject = bookArray.getJSONObject(i)
             val extrasString: String? =
                 when (extras) {
-                    BookModel.Extras.AUTHORS -> {
+                    BookExtrasType.AUTHORS -> {
                         val authorJSONArray: JSONArray = bookJSONObject.getJSONArray("authors")
                         authorJSONArray.join(", ")
                     }
 
-                    BookModel.Extras.PAGES -> {
+                    BookExtrasType.PAGES -> {
                         bookJSONObject.getString("pages")
                     }
 
@@ -185,7 +188,7 @@ object BookFetcher {
             response.body?.string()?.let { jsonString ->
                 Log.i(TAG, jsonString)
                 if (response.isSuccessful)
-                    parseItem(jsonString, BookModel.Extras.PAGES)
+                    parseItem(jsonString, BookExtrasType.PAGES)
                 else throw IOException(jsonString)
             }
         } catch (err: IOException) {
@@ -194,17 +197,17 @@ object BookFetcher {
         }
 
 
-    private fun parseItem(jsonString: String, extras: BookModel.Extras): BookModel {
+    private fun parseItem(jsonString: String, extras: BookExtrasType): BookModel {
 
         val bookJSONObject = JSONObject(jsonString)
         val extrasString: String? =
             when (extras) {
-                BookModel.Extras.AUTHORS -> {
+                BookExtrasType.AUTHORS -> {
                     val authorJSONArray: JSONArray = bookJSONObject.getJSONArray("authors")
                     authorJSONArray.join(", ")
                 }
 
-                BookModel.Extras.PAGES -> {
+                BookExtrasType.PAGES -> {
                     bookJSONObject.getString("pages")
                 }
 
