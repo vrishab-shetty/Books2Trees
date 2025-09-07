@@ -126,7 +126,7 @@ class ViewPagerAdapter(
             }
         }
 
-        override fun showOptionMenu(model: BookModel, itemView: View) {
+        override fun showOptionsMenu(model: BookModel, itemView: View) {
             val options = listOf(R.string.drop, R.string.on_hold, R.string.remove)
 
             itemView.popupMenuNoIcons(options.mapIndexed { index, value ->

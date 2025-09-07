@@ -21,7 +21,7 @@ open class BookHolder(
 
         binding.root.setOnLongClickListener {itemView ->
             currentModel?.let {
-                onItemPressed?.showOptionMenu(it, itemView)
+                onItemPressed?.showOptionsMenu(it, itemView)
             }
             onItemPressed != null
         }

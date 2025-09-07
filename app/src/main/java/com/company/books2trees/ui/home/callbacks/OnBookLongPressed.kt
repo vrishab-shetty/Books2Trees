@@ -4,5 +4,5 @@ import android.view.View
 import com.company.books2trees.ui.models.BookModel
 
 interface OnBookLongPressed {
-    fun showOptionMenu(model: BookModel, itemView: View)
+    fun showOptionsMenu(model: BookModel, itemView: View)
 }

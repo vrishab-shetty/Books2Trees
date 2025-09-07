@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.company.books2trees.databinding.ItemLibraryBinding
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
 import com.company.books2trees.ui.home.callbacks.OnBookLongPressed
-import com.company.books2trees.ui.models.BookModel
 import com.company.books2trees.ui.profile.database.LibraryItem
 import com.company.books2trees.utils.DiffAdapter
 
@@ -51,7 +50,7 @@ class PageAdapter(
                     binding.model?.let { onItemClick.openBook(it) }
                 }
                 setOnLongClickListener {
-                    binding.model?.let { onItemLongClick.showOptionMenu(it, itemView) }
+                    binding.model?.let { onItemLongClick.showOptionsMenu(it, itemView) }
                     true
                 }
             }

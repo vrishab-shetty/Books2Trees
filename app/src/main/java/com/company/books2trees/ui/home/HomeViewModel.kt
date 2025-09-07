@@ -1,20 +1,18 @@
 package com.company.books2trees.ui.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.repos.BookRepository
 import com.company.books2trees.repos.LibraryRepository
 import com.company.books2trees.ui.dataclass.RecentList
-import com.company.books2trees.ui.home.database.RecentItem
 import com.company.books2trees.ui.home.viewState.HomeViewState
 import com.company.books2trees.ui.models.BookModel
 import com.company.books2trees.ui.profile.LibraryPageItem
-import com.company.books2trees.ui.profile.database.LibraryItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -33,22 +31,26 @@ class HomeViewModel(
     private val _recentList = bookRepository.loadRecent().map { models ->
         RecentList[5, models].getItems()
     }
-    val recentList: LiveData<List<RecentItem>>
-        get() = _recentList.asLiveData()
 
     init {
-        fetchItems()
+        fetchCombinedItems()
     }
 
-    private fun fetchItems() {
-        viewModelScope.launch(Dispatchers.Main) {
-            try {
-                _items.value = HomeViewState.Loading
-                val result = bookRepository.fetchItems()
-                _items.value = HomeViewState.Content(result)
-            } catch (t: Throwable) {
-                _items.value = HomeViewState.Error(t)
-            }
+    private fun fetchCombinedItems() {
+        viewModelScope.launch {
+            combine(_recentList, bookRepository.fetchItemsFlow()) { recent, mainItemsResult ->
+                if (mainItemsResult.isSuccess) {
+                    HomeViewState.Content(
+                        mainItemsResult.getOrThrow(),
+                        recent
+                    )
+                } else {
+                    HomeViewState.Error(mainItemsResult.exceptionOrNull()!!)
+                }
+            }.catch { e -> emit(HomeViewState.Error(e)) }
+                .collect { combinedState ->
+                    _items.value = combinedState
+                }
         }
     }
 

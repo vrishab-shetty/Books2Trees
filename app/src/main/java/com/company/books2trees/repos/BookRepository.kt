@@ -14,6 +14,8 @@ import com.company.books2trees.utils.UIHelper.POPULAR_BOOKS_POSITION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 class BookRepository(private val context: Context) {
@@ -54,8 +56,17 @@ class BookRepository(private val context: Context) {
 
     }
 
+    fun fetchItemsFlow(): Flow<Result<Map<Int, List<BookModel>>>> = flow {
+        try {
+            val items = fetchItems()
+            emit(Result.success(items))
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }.flowOn(Dispatchers.IO)
+
     //     Calls the required requests
-    suspend fun fetchItems() = withContext(
+    private suspend fun fetchItems() = withContext(
         Dispatchers.IO
     ) {
 
