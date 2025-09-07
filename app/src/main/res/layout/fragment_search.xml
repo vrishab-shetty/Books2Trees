@@ -73,7 +73,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_result_list"
         android:layout_width="match_parent"
-        tools:listitem="@layout/item_search_result"
+        tools:listitem="@layout/item_search_result_book"
         android:layout_height="match_parent"
         android:padding="@dimen/container_padding" />
 

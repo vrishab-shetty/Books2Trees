@@ -16,7 +16,7 @@ import com.company.books2trees.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentSearchBinding
 import com.company.books2trees.ui.home.callbacks.OnBookClicked
 import com.company.books2trees.ui.models.BookModel
-import com.company.books2trees.ui.search.adapter.SearchResultAdapter
+import com.company.books2trees.ui.search.adapter.SearchResultBookAdapter
 import com.company.books2trees.utils.UIHelper
 import com.company.books2trees.utils.UIHelper.hideKeyboard
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,20 +26,20 @@ import com.google.android.material.button.MaterialButton
 class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate), OnBookClicked {
 
     private val vm: SearchViewModel by viewModels()
-    private lateinit var searchResultAdapter: SearchResultAdapter
+    private lateinit var searchResultBookAdapter: SearchResultBookAdapter
     private var filterListView: ListView? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchResultAdapter =
-            SearchResultAdapter(layoutInflater, this@SearchFragment)
+        searchResultBookAdapter =
+            SearchResultBookAdapter(layoutInflater, this@SearchFragment)
 
         useBinding { binding ->
             binding.searchResultList.apply {
                 layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                adapter = searchResultAdapter
+                adapter = searchResultBookAdapter
             }
 
             binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -73,7 +73,7 @@ class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearch
                     useBinding { binding ->
                         binding.searchLoadingBar.visibility = View.GONE
                     }
-                    searchResultAdapter.submitList(viewState.list)
+                    searchResultBookAdapter.submitList(viewState.list)
                 }
 
                 is ResultViewState.Error -> {
