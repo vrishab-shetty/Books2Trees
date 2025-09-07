@@ -145,28 +145,8 @@ object BookFetcher {
         val bookArray = JSONArray(jsonString)
 
         for (i in 0 until bookArray.length()) {
-            val bookJSONObject: JSONObject = bookArray.getJSONObject(i)
-            val extrasString: String? =
-                when (extras) {
-                    BookExtrasType.AUTHORS -> {
-                        val authorJSONArray: JSONArray = bookJSONObject.getJSONArray("authors")
-                        authorJSONArray.join(", ")
-                    }
-
-                    BookExtrasType.PAGES -> {
-                        bookJSONObject.getString("pages")
-                    }
-
-                    else -> null
-                }
-            val item = SimpleBookModel(
-                bookJSONObject.getString("book_id"),
-                bookJSONObject.getString("name"),
-                bookJSONObject.getString("cover"),
-                bookJSONObject.getString("url"),
-                extrasString
-            )
-
+            val jsonString = bookArray.getString(i)
+            val item = parseItem(jsonString, extras);
             items.add(item)
         }
 
