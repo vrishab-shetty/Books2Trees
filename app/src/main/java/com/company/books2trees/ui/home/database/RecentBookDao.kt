@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RecentBookDao {
 
-    @Query("SELECT * FROM recent")
+    @Query("SELECT * FROM recent ORDER BY lastAccessed DESC LIMIT 5")
     fun getAll(): Flow<List<RecentItem>>
 
     @Query("SELECT * FROM recent where id = :id")

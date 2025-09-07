@@ -4,16 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.repos.BookRepository
 import com.company.books2trees.repos.LibraryRepository
-import com.company.books2trees.ui.dataclass.RecentList
 import com.company.books2trees.ui.home.viewState.HomeViewState
 import com.company.books2trees.ui.models.BookModel
 import com.company.books2trees.ui.profile.LibraryPageItem
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -28,9 +25,7 @@ class HomeViewModel(
     val items: StateFlow<HomeViewState>
         get() = _items
 
-    private val _recentList = bookRepository.loadRecent().map { models ->
-        RecentList[5, models].getItems()
-    }
+    private val _recentList = bookRepository.loadRecent()
 
     init {
         fetchCombinedItems()

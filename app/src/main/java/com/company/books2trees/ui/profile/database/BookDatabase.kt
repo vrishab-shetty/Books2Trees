@@ -11,6 +11,11 @@ import com.company.books2trees.ui.models.Converters
 
 private const val DATABASE_NAME = "books2trees.db"
 
+/**
+ *  Note: If in manifest file, the variable allowBackup is set to true
+ *  then uninstalling and reinstalling the app while not reset the database.
+ *
+ */
 @Database(entities = [LibraryItem::class, RecentItem::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class BookDatabase : RoomDatabase() {

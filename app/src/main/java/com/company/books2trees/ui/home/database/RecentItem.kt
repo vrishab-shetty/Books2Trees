@@ -15,6 +15,7 @@ class RecentItem : BookConverter {
     var imgUrl: String? = null
     var url: String? = null
     var extras: String? = null
+    var lastAccessed: Long = System.currentTimeMillis()
 
     override fun toBookModel(): BookModel {
         return SimpleBookModel(
@@ -30,20 +31,18 @@ class RecentItem : BookConverter {
         return "RecentItem(id='$id', title=$title, imgUrl=$imgUrl, url=$url, extras=$extras)"
     }
 
-    /*** Comment for future use
+    /*** Commented for future use
 
     companion object {
-    fun fromBookModel(model: BookModel): RecentItem {
-    val instance = RecentItem()
-
-    instance.id = model.id
-    instance.title = model.name
-    instance.imgUrl = model.cover
-    instance.url = model.url
-    instance.extras = model.extras
-
-    return instance
-    }
+        fun fromBookModel(model: BookModel): RecentItem {
+            return RecentItem().apply {
+                this.id = model.id
+                this.title = model.name
+                this.imgUrl = model.cover
+                this.url = model.url
+                this.extras = model.extras
+            }
+        }
     }
 
      ***/
