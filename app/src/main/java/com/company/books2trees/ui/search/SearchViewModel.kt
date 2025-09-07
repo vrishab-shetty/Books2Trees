@@ -37,7 +37,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         this.query = query
         _result.value = ResultViewState.Loading
         _selectedFilter
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             _result.postValue(
                 try {
                     val result = BookRepository.search(

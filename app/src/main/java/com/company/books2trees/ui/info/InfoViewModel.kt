@@ -17,14 +17,14 @@ class InfoViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onUriReceived(uri: Uri) {
         Log.i("TAG", "onUriReceived: ${uri.path}")
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             PdfRepository.addPdf(getApplication(), uri)
 
         }
     }
 
     fun onDeletePdf(model: PdfModel) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             PdfRepository.removePdf(getApplication(), model.id)
         }
     }

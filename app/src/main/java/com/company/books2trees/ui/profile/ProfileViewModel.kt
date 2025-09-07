@@ -63,7 +63,7 @@ class ProfileViewModel(
     }
 
     fun onBookClicked(model: BookModel) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             try {
                 bookRepository.insertRecent(model)
             } catch (t: Throwable) {
@@ -73,7 +73,7 @@ class ProfileViewModel(
     }
 
     fun onDeleteBookClicked(id: String) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             try {
                 libraryRepository.delete(id)
             } catch (t: Throwable) {
@@ -97,7 +97,7 @@ class ProfileViewModel(
     }
 
     fun updateLibraryItem(item: LibraryItem) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             try {
                 libraryRepository.update(item)
             } catch (t: Throwable) {

@@ -26,7 +26,7 @@ class ViewPdfViewModel(application: Application) : AndroidViewModel(application)
 
     private fun getPdfRenderer() {
         if (model != null) {
-            viewModelScope.launch(Dispatchers.Main) {
+            viewModelScope.launch {
                 _renderer.postValue(PdfRepository.getRenderer(getApplication(), model!!))
             }
         }

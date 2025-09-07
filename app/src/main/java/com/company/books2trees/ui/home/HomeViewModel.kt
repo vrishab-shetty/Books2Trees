@@ -55,7 +55,7 @@ class HomeViewModel(
     }
 
     private fun addRecentItem(model: BookModel) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             try {
                 bookRepository.insertRecent(model)
             } catch (t: Throwable) {
@@ -70,7 +70,7 @@ class HomeViewModel(
 
     fun onRemoveClicked(model: BookModel) {
 
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             try {
                 bookRepository.deleteRecent(model.id)
             } catch (t: Throwable) {
@@ -81,7 +81,7 @@ class HomeViewModel(
     }
 
     fun insertToLibrary(model: BookModel, categoryId: LibraryPageItem.CategoryId) {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             try {
                 libraryRepository.insert(model, categoryId)
             } catch (t: Throwable) {
