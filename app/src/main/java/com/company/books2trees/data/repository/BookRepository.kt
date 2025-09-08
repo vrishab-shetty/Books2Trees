@@ -61,9 +61,24 @@ class BookRepository(private val context: Context) {
         result
     }
 
-    private fun fetchPopularBooks() = BookFetcher.fetchBooksBySubject("love")
+    private fun fetchPopularBooks() = BookFetcher.fetchTrendingBooks()
 
-    private fun fetchAwardedBooks(): List<BookModel> = BookFetcher.fetchBooksBySubject("history")
+    /**
+     *  You can easily swap "pulitzer_prize" with other famous awards:
+     *
+         * national_book_award: For winners of the U.S. National Book Award.
+         * booker_prize: For winners of the prestigious Booker Prize for fiction.
+         * hugo_award: If you want to feature award-winning Science Fiction.
+         * newbery_medal: For acclaimed works of children's literature.
+     *
+     */
+    private fun fetchAwardedBooks(): List<BookModel> {
+        return listOf(
+            BookFetcher.fetchBooksBySubject("national_book_award", limit = 5),
+            BookFetcher.fetchBooksBySubject("booker_prize", limit = 5),
+            BookFetcher.fetchBooksBySubject("newbery_medal", limit = 5)
+        ).flatten()
+    }
 
     suspend fun insertRecent(model: BookModel) = withContext(Dispatchers.IO) {
         val db = BookDatabase[context]

@@ -20,9 +20,32 @@ object BookFetcher {
 
     private val client = OkHttpClient()
 
-    fun fetchBooksBySubject(subject: String): List<BookModel> {
+    fun fetchTrendingBooks(): List<BookModel> {
         val items = mutableListOf<BookModel>()
-        val url = "$OPEN_LIBRARY_API_URL/subjects/$subject.json?limit=20&details=true"
+        val url = "$OPEN_LIBRARY_API_URL/trending/weekly.json?limit=20"
+
+        try {
+            val request = Request.Builder().url(url).build()
+            val response = client.newCall(request).execute()
+
+            response.body.string().let { jsonString ->
+                Log.d(TAG, "TRENDING RESPONSE: $jsonString")
+                if (response.isSuccessful) {
+                    val jsonResponse = JSONObject(jsonString)
+
+                    val worksArray = jsonResponse.getJSONArray("works")
+                    parseBookDocs(items, worksArray)
+                } else throw IOException("Unsuccessful response: ${response.message}")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fetch trending books", e)
+        }
+        return items
+    }
+
+    fun fetchBooksBySubject(subject: String, limit: Int = 20): List<BookModel> {
+        val items = mutableListOf<BookModel>()
+        val url = "$OPEN_LIBRARY_API_URL/subjects/$subject.json?limit=$limit&details=true"
 
         try {
             val request = Request.Builder().url(url).build()
