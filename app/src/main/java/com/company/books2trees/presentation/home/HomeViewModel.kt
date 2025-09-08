@@ -68,7 +68,7 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 bookRepository.deleteRecent(model.id)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 error("Delete Operation Unsuccessful")
             }
         }
@@ -79,7 +79,7 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 libraryRepository.insert(model, categoryId)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 error("Insert Operation Unsuccessful")
             }
         }

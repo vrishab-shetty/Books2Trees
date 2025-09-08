@@ -75,7 +75,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             try {
                 libraryRepository.delete(id)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 error("Delete Operation Unsuccessful")
             }
         }
@@ -99,7 +99,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             try {
                 libraryRepository.update(item)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 error("Update Operation Unsuccessful")
             }
         }

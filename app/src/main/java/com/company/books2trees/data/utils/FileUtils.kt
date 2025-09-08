@@ -104,7 +104,7 @@ object FileUtils {
     }
 
     @Throws(IOException::class)
-    suspend fun getFileSize(context: Context, uri: Uri): String? {
+    fun getFileSize(context: Context, uri: Uri): String? {
         var size: String? = null
 
         context.contentResolver.query(uri, null, null, null, null, null)?.use { cursor ->

@@ -51,7 +51,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun addRecentItem(model: BookModel) {
-
+        // ToDo: Implement the add function
     }
 
     fun onBookClicked(model: BookModel) {

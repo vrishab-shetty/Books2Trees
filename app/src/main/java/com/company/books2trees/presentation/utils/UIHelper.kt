@@ -20,7 +20,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.company.books2trees.R
 import com.google.android.material.appbar.MaterialToolbar

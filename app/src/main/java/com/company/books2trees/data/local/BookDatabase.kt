@@ -5,10 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.company.books2trees.data.local.RecentBookDao
-import com.company.books2trees.data.model.RecentItem
-import com.company.books2trees.data.local.Converters
 import com.company.books2trees.data.model.LibraryItem
+import com.company.books2trees.data.model.RecentItem
 
 private const val DATABASE_NAME = "books2trees.db"
 

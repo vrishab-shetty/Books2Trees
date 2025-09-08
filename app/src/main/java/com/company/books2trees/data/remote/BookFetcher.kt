@@ -146,7 +146,7 @@ object BookFetcher {
 
         for (i in 0 until bookArray.length()) {
             val jsonString = bookArray.getString(i)
-            val item = parseItem(jsonString, extras);
+            val item = parseItem(jsonString, extras)
             items.add(item)
         }
 
