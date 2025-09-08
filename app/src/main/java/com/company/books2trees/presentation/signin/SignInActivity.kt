@@ -3,76 +3,38 @@ package com.company.books2trees.presentation.signin
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.company.books2trees.MainActivity
 import com.company.books2trees.databinding.ActivitySignInBinding
-import com.company.books2trees.data.auth.GoogleAuthUiClient
 import com.company.books2trees.presentation.utils.collectLatestLifecycleFlow
-import com.google.android.gms.auth.api.identity.Identity
-import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SignInActivity : AppCompatActivity() {
-    private val vm: SignInViewModel by viewModels()
+    private val vm: SignInViewModel by viewModel()
     private lateinit var binding: ActivitySignInBinding
-
-    private val googleAuthUiClient by lazy {
-        GoogleAuthUiClient(
-            context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
-        )
-    }
-
-    private val launcher =
-        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-
-            if (result.resultCode == RESULT_OK) {
-                lifecycleScope.launch {
-                    val signInResult = googleAuthUiClient.signInResultFromIntent(
-                        intent = result.data ?: return@launch
-                    )
-                    Toast.makeText(this@SignInActivity, "Signed In Successfully", Toast.LENGTH_SHORT).show()
-                    vm.onSignInResult(signInResult)
-                }
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        googleAuthUiClient.getSignedInUser()?.run {
-            Toast.makeText(this@SignInActivity, "Welcome ${this.username}", Toast.LENGTH_SHORT).show()
-            vm.onSignInData(this)
-        }
-
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.signInBtn.setOnClickListener {
-            lifecycleScope.launch {
-                googleAuthUiClient.getSignedInUser()?.run {
-                    vm.onSignInData(this)
-                } ?: run {
-                    val signInIntentSender = googleAuthUiClient.signIn()
-                    launcher.launch(
-                        IntentSenderRequest.Builder(
-                            signInIntentSender ?: return@launch
-                        ).build()
-                    )
-                }
-            }
+            vm.signIn()
         }
 
         collectLatestLifecycleFlow(vm.state) { state ->
             when (state) {
                 is SignInState.Pending -> {
-
+                    // You could show a loading spinner here
                 }
 
                 is SignInState.Content -> {
+                    // On successful sign-in, navigate to the main activity.
+                    Toast.makeText(
+                        this,
+                        "Welcome, ${state.data.username ?: "User"}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
@@ -80,14 +42,11 @@ class SignInActivity : AppCompatActivity() {
                 is SignInState.Error -> {
                     Toast.makeText(
                         this,
-                        "Sign In Unsuccessful ${state.errorMessage}",
+                        "Sign In Unsuccessful: ${state.errorMessage}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
         }
-
     }
-
-
 }

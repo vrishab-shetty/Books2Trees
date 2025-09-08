@@ -7,25 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.company.books2trees.data.auth.GoogleAuthUiClient
+import com.company.books2trees.data.repository.AuthRepository // CHANGED: Import the repository
 import com.company.books2trees.databinding.ActivityMainBinding
 import com.company.books2trees.presentation.common.AppAdManager
 import com.company.books2trees.presentation.common.OnViewProfile
-import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), OnViewProfile {
 
-
     private lateinit var binding: ActivityMainBinding
-
-
-    private val googleAuthUiClient by lazy {
-        GoogleAuthUiClient(
-            context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
-        )
-    }
+    private val authRepository: AuthRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,15 +37,14 @@ class MainActivity : AppCompatActivity(), OnViewProfile {
         } else {
             binding.bottomNavbar.visibility = View.GONE
         }
-
     }
 
-    override fun getData() = googleAuthUiClient.getSignedInUser()
+    override fun getData() = authRepository.user.value
+
     override fun signOut(callback: () -> Unit) {
         lifecycleScope.launch {
-            googleAuthUiClient.signOut()
+            authRepository.signOut()
             callback.invoke()
         }
     }
-
 }

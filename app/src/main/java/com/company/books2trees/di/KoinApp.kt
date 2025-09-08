@@ -2,9 +2,9 @@ package com.company.books2trees.di
 
 import android.app.Application
 import com.company.books2trees.data.repository.BookRepository
-import com.company.books2trees.presentation.profile.ProfileViewModel
 import com.company.books2trees.data.repository.LibraryRepository
 import com.company.books2trees.presentation.home.HomeViewModel
+import com.company.books2trees.presentation.profile.ProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -12,7 +12,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.koin.dsl.module
 
-private val MODULE = module {
+private val appModule = module {
     single { LibraryRepository(androidContext().applicationContext) }
     single { BookRepository(androidContext().applicationContext) }
     viewModel {
@@ -27,10 +27,11 @@ private val MODULE = module {
 class KoinApp : Application() {
     override fun onCreate() {
         super.onCreate()
+
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@KoinApp)
-            modules(MODULE)
+            modules(appModule, authModule)
         }
     }
 }
