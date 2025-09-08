@@ -1,11 +1,11 @@
 package com.company.books2trees.ui.home
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -17,7 +17,7 @@ import com.company.books2trees.R
 import com.company.books2trees.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentHomeBinding
 import com.company.books2trees.ui.AutoFitRecyclerView
-import com.company.books2trees.ui.common.AdHandler
+import com.company.books2trees.ui.common.AppAdManager
 import com.company.books2trees.ui.common.BookListAdapter
 import com.company.books2trees.ui.home.adapter.HomeAdapter
 import com.company.books2trees.ui.home.adapter.HomePageListItem
@@ -35,28 +35,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     HomeAdapter.Listener {
 
     private val vm: HomeViewModel by viewModel()
-    private var adManager: AdHandler? = null
 
     private lateinit var homeAdapter: HomeAdapter
     private val viewPool = RecyclerView.RecycledViewPool()
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is AdHandler) {
-            adManager = context
-        } else {
-            throw RuntimeException("$context must implement AdManager")
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adManager?.loadAd()
-
         homeAdapter = HomeAdapter(layoutInflater, this, viewPool)
-
 
         useBinding { binding ->
             binding.pageList.apply {
@@ -105,14 +91,14 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         vm.onBookClicked(model)
 
         // Open Book from URL
-        adManager?.apply {
-            if (isInitialized()) {
-                showAd {
-                    startActivity(Intent(Intent.ACTION_VIEW).apply {
-                        data = model.url?.toUri()
-                    })
-                }
+        if (AppAdManager.isAdReady()) {
+            AppAdManager.showAd(requireActivity()) {
+                startActivity(Intent(Intent.ACTION_VIEW).apply {
+                    data = model.url?.toUri()
+                })
             }
+        } else {
+            Toast.makeText(context, "Ad not ready opening content.", Toast.LENGTH_LONG).show()
         }
 
 
@@ -152,10 +138,5 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
     override fun onBookRemove(book: BookModel) {
         vm.onRemoveClicked(book)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        adManager = null
     }
 }
