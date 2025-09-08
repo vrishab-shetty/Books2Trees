@@ -6,9 +6,9 @@
     <string name="menu_title_settings">Settings</string>
     <string name="menu_title_info">Info</string>
     <string name="book_caption">Book Cover</string>
-    <string name="popular_books_caption">Popular books - 2022</string>
+    <string name="popular_books_caption">Popular books</string>
     <string name="recent_books_caption">Continue Reading</string>
-    <string name="awarded_books_caption">Awarded Books - 2022</string>
+    <string name="awarded_books_caption">Awarded Books</string>
     <string name="settings_account">Accounts</string>
     <string name="settings_updates">Updates</string>
     <string name="settings_policies">Privacy policy</string>
