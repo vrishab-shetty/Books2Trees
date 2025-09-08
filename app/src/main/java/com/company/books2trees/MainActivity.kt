@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.company.books2trees.data.auth.GoogleAuthUiClient
 import com.company.books2trees.databinding.ActivityMainBinding
-import com.company.books2trees.presentation.sign_in.GoogleAuthUiClient
-import com.company.books2trees.ui.common.AppAdManager
-import com.google.android.gms.ads.rewarded.RewardedAd
+import com.company.books2trees.presentation.common.AppAdManager
+import com.company.books2trees.presentation.common.OnViewProfile
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 

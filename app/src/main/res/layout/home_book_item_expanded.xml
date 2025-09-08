@@ -36,7 +36,7 @@
 
     </FrameLayout>
 
-    <com.company.books2trees.ui.AutoFitRecyclerView
+    <com.company.books2trees.presentation.common.views.AutoFitRecyclerView
         android:id="@+id/home_expanded_recycler"
         android:columnWidth="128dp"
         android:clipToPadding="false"
