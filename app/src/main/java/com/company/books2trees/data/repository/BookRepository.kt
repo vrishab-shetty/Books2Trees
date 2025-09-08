@@ -2,12 +2,10 @@ package com.company.books2trees.data.repository
 
 import android.content.Context
 import android.util.LruCache
-import com.company.books2trees.presentation.utils.awardedItems
-import com.company.books2trees.presentation.utils.popularItems
-import com.company.books2trees.presentation.utils.searchResult
-import com.company.books2trees.data.model.RecentItem
-import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.data.local.BookDatabase
+import com.company.books2trees.data.model.RecentItem
+import com.company.books2trees.data.remote.BookFetcher
+import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.utils.UIHelper
 import com.company.books2trees.presentation.utils.UIHelper.AWARDED_BOOKS_POSITION
 import com.company.books2trees.presentation.utils.UIHelper.POPULAR_BOOKS_POSITION
@@ -20,40 +18,54 @@ import kotlinx.coroutines.withContext
 
 class BookRepository(private val context: Context) {
 
-    enum class GenreList {
-        All,
-        Art,
-        Biography,
-        Business,
-        ChickLit,
-        Children,
-        Comics,
-        Contemporary,
-        Cookbooks,
-        Crime,
-        Fantasy,
-        Fiction,
-        Graphic,
-        History,
-        Horror,
-        Comedy,
-        Music,
-        Mystery,
-        Nonfiction,
-        Philosophy,
-        Poetry,
-        Romance,
-        ScienceFiction,
-        SelfHelp,
-        Suspense,
-        Sports,
-        Thriller;
+    companion object {
+        const val DEFAULT_GENRE = "All"
 
-        companion object {
-            fun toList() = entries.map { it.name }
+        private val searchCache = LruCache<Pair<String, String>, List<BookModel>>(5)
 
+        fun getGenres(): List<String> {
+            return listOf(
+                "All",
+                "Art",
+                "Biography",
+                "Business",
+                "Children",
+                "Comics",
+                "Contemporary",
+                "Cookbooks",
+                "Crime",
+                "Fantasy",
+                "Fiction",
+                "History",
+                "Horror",
+                "Comedy",
+                "Music",
+                "Mystery",
+                "Nonfiction",
+                "Philosophy",
+                "Poetry",
+                "Romance",
+                "Science Fiction",
+                "Self Help",
+                "Sports",
+                "Suspense",
+                "Thriller"
+            )
         }
 
+        suspend fun search(query: String, filter: String?): List<BookModel> =
+            withContext(Dispatchers.IO) {
+//                delay(1000)
+//                searchResult
+
+                var results: List<BookModel>?
+
+                synchronized(searchCache) {
+                    results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
+                }
+                results ?: BookFetcher.searchBook(query, filter)
+                    .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
+            }
     }
 
     fun fetchItemsFlow(): Flow<Result<Map<Int, List<BookModel>>>> = flow {
@@ -73,12 +85,12 @@ class BookRepository(private val context: Context) {
         delay(1000)
 
         val popularItems =
-            popularItems
-//            BookFetcher.fetchPopularItems()
+//            popularItems
+            BookFetcher.fetchPopularItems()
 
         val awardedItems =
-            awardedItems
-//            BookFetcher.fetchAwardedItems()
+//            awardedItems
+            BookFetcher.fetchAwardedItems()
 
         val result: MutableMap<Int, List<BookModel>> = mutableMapOf()
 
@@ -117,24 +129,4 @@ class BookRepository(private val context: Context) {
 
     }
 
-    companion object {
-        val DEFAULT_GENRE = GenreList.All.name
-        private val searchCache = LruCache<Pair<String, String>, List<BookModel>>(5)
-
-        suspend fun search(query: String, filter: String?): List<BookModel> =
-            withContext(Dispatchers.IO) {
-                delay(1000)
-                searchResult
-
-//                var results: List<BookModel>?
-//
-//                synchronized(searchCache) {
-//                    results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
-//                }
-//                results ?: BookFetcher.searchBook(query, filter)
-//                    .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
-            }
-
-
-    }
 }

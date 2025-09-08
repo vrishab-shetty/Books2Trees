@@ -2,10 +2,9 @@ package com.company.books2trees.data.remote
 
 import android.util.Log
 import com.company.books2trees.data.repository.BookRepository
-import com.company.books2trees.domain.model.AwardedBookModel
 import com.company.books2trees.domain.model.BookModel
-import com.company.books2trees.domain.model.PopularBookModel
 import com.company.books2trees.domain.model.SimpleBookModel
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -15,243 +14,146 @@ import java.util.Locale
 
 object BookFetcher {
 
-    enum class BookExtrasType {
-        AUTHORS, PAGES, NONE
-    }
-
-    private const val API_KEY = "c0b850ea78mshc0c881d0496b98bp11f98fjsn498d1c65d248"
-    private const val API_HOST = "hapi-books.p.rapidapi.com"
     private const val TAG = "BookFetcher"
+    private const val OPEN_LIBRARY_API_URL = "https://openlibrary.org"
+    private const val OPEN_LIBRARY_COVERS_URL = "https://covers.openlibrary.org"
 
     private val client = OkHttpClient()
 
-    fun fetchPopularItems(): List<PopularBookModel> {
-
-        val items = mutableListOf<PopularBookModel>()
-
-        try {
-            val request = Request.Builder()
-                .url("https://hapi-books.p.rapidapi.com/month/2022/3")
-                .get()
-                .addHeader(
-                    "X-RapidAPI-Key", API_KEY
-                )
-                .addHeader(
-                    "X-RapidAPI-Host", API_HOST
-                )
-                .build()
-
-            val response = client.newCall(request).execute()
-            response.body.string().let { jsonString ->
-                Log.i(TAG, jsonString)
-                if (response.isSuccessful)
-                    parsePopularItems(items, jsonString)
-                else throw IOException(jsonString)
-            }
-        } catch (err: IOException) {
-            Log.e(TAG, "Failed to fetch popular items", err)
-        }
-
-        return items
+    fun fetchPopularItems(): List<BookModel> {
+        return fetchBooksBySubject("love")
     }
 
-    private fun parsePopularItems(
-        items: MutableList<PopularBookModel>,
-        jsonString: String
-    ) {
+    fun fetchAwardedItems(): List<BookModel> {
+        return fetchBooksBySubject("history")
+    }
 
-        val bookArray = JSONArray(jsonString)
+    private fun fetchBooksBySubject(subject: String): List<BookModel> {
+        val items = mutableListOf<BookModel>()
+        val url = "$OPEN_LIBRARY_API_URL/subjects/$subject.json?limit=20&details=true" // Get up to 20 books
 
-        for (i in 0 until bookArray.length()) {
-            val bookJSONObject: JSONObject = bookArray.getJSONObject(i)
-            val item = PopularBookModel(
-                bookJSONObject.getString("book_id"),
-                bookJSONObject.getInt("position"),
-                bookJSONObject.getString("name"),
-                bookJSONObject.getDouble("rating"),
-                bookJSONObject.getString("cover"),
-                bookJSONObject.getString("url")
-            )
+        try {
+            val request = Request.Builder().url(url).build()
+            val response = client.newCall(request).execute()
 
-            items.add(item)
+            response.body.string().let { jsonString ->
+                Log.d(TAG, "SUBJECT RESPONSE ($subject): $jsonString")
+
+                if (response.isSuccessful) {
+                    val jsonResponse = JSONObject(jsonString)
+                    // In the Subjects API, the results are in a "works" array
+                    val worksArray = jsonResponse.getJSONArray("works")
+                    parseBookDocs(items, worksArray) // We can reuse the search parser!
+                } else throw IOException("Unsuccessful response: ${response.message}")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fetch subject: $subject", e)
         }
-
+        return items
     }
 
     fun searchBook(query: String, filter: String? = null): List<BookModel> {
-
         val items = mutableListOf<BookModel>()
-        val values = query.split("\\s").joinToString("+")
-        if (filter == null || filter == BookRepository.Companion.DEFAULT_GENRE) {
-            try {
-                val request = Request.Builder()
-                    .url("https://hapi-books.p.rapidapi.com/search/$values")
-                    .addHeader(
-                        "X-RapidAPI-Key", API_KEY
-                    )
-                    .addHeader(
-                        "X-RapidAPI-Host", API_HOST
-                    )
-                    .build()
+        val formattedQuery = query.trim().split("\\s+".toRegex()).joinToString("+")
 
-                val response = client.newCall(request).execute()
-                response.body.string().let { jsonString ->
-                    Log.i(TAG, jsonString)
-                    if (response.isSuccessful)
-                        parseItems(items, jsonString, BookExtrasType.AUTHORS)
-                    else throw IOException(jsonString)
-                }
-            } catch (err: IOException) {
-                Log.e(TAG, "Failed on the search query", err)
-            }
-        } else {
-            try {
-                val request = Request.Builder()
-                    .url("https://hapi-books.p.rapidapi.com/week/${filter.lowercase(Locale.getDefault())}/10")
-                    .addHeader(
-                        "X-RapidAPI-Key", API_KEY
-                    )
-                    .addHeader(
-                        "X-RapidAPI-Host", API_HOST
-                    )
-                    .build()
+        val fields = "key,title,author_name,cover_i"
 
-                val response = client.newCall(request).execute()
-                response.body.string().let { jsonString ->
-                    Log.i(TAG, jsonString)
-                    if (response.isSuccessful)
-                        parseItems(items, jsonString, BookExtrasType.NONE)
-                    else throw IOException(jsonString)
-                }
-            } catch (err: IOException) {
-                Log.e(TAG, "Failed on the search query with filter", err)
-            }
+        val urlBuilder = "$OPEN_LIBRARY_API_URL/search.json?q=$formattedQuery&fields=$fields".toHttpUrlOrNull()?.newBuilder()
+        if (filter != null && filter != BookRepository.DEFAULT_GENRE) {
+            urlBuilder?.addQueryParameter("subject", filter.lowercase(Locale.getDefault()))
         }
+        val url = urlBuilder?.build().toString()
 
-        return items.filter { book ->
-            var match = false
-            query.split("\\s").forEach {
-                match = match || book.name.contains(it, true)
-            }
-            match
-        }
-    }
-
-    private fun parseItems(
-        items: MutableList<BookModel>,
-        jsonString: String,
-        extras: BookExtrasType
-    ) {
-        val bookArray = JSONArray(jsonString)
-
-        for (i in 0 until bookArray.length()) {
-            val jsonString = bookArray.getString(i)
-            val item = parseItem(jsonString, extras)
-            items.add(item)
-        }
-
-    }
-
-    fun fetchBookById(modelId: String): BookModel? =
         try {
-
-            val request = Request.Builder()
-                .url("https://hapi-books.p.rapidapi.com/book/$modelId")
-                .get()
-                .addHeader(
-                    "X-RapidAPI-Key", API_KEY
-                )
-                .addHeader(
-                    "X-RapidAPI-Host", API_HOST
-                )
-                .build()
-
+            val request = Request.Builder().url(url).build()
             val response = client.newCall(request).execute()
             response.body.string().let { jsonString ->
-                Log.i(TAG, jsonString)
-                if (response.isSuccessful)
-                    parseItem(jsonString, BookExtrasType.PAGES)
-                else throw IOException(jsonString)
+                if (response.isSuccessful) {
+                    val jsonResponse = JSONObject(jsonString)
+                    val docsArray = jsonResponse.getJSONArray("docs")
+                    parseBookDocs(items, docsArray)
+                } else throw IOException("Unsuccessful response: ${response.message}")
             }
-        } catch (err: IOException) {
-            Log.e(TAG, "Failed to fetch item with ID: $modelId", err)
-            null
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed on search query: $query", e)
         }
+        return items
+    }
 
-
-    private fun parseItem(jsonString: String, extras: BookExtrasType): BookModel {
-
-        val bookJSONObject = JSONObject(jsonString)
-        val extrasString: String? =
-            when (extras) {
-                BookExtrasType.AUTHORS -> {
-                    val authorJSONArray: JSONArray = bookJSONObject.getJSONArray("authors")
-                    authorJSONArray.join(", ")
+    fun fetchBookById(modelId: String): BookModel? {
+        val url = "$OPEN_LIBRARY_API_URL$modelId.json"
+        try {
+            val request = Request.Builder().url(url).build()
+            val response = client.newCall(request).execute()
+            return response.body?.string()?.let { jsonString ->
+                if (response.isSuccessful) {
+                    parseSingleBook(jsonString)
+                } else {
+                    throw IOException("Unsuccessful response: ${response.message}")
                 }
-
-                BookExtrasType.PAGES -> {
-                    bookJSONObject.getString("pages")
-                }
-
-                else -> null
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fetch item with ID: $modelId", e)
+            return null
+        }
+    }
+
+    private fun parseSingleBook(jsonString: String): BookModel {
+        val bookJson = JSONObject(jsonString)
+        val title = bookJson.optString("title", "No Title")
+        val id = bookJson.optString("key", "")
+
+        val coversArray = bookJson.optJSONArray("covers")
+        val coverUrl = if (coversArray != null && coversArray.length() > 0) {
+            "$OPEN_LIBRARY_COVERS_URL/b/id/${coversArray.getInt(0)}-L.jpg"
+        } else ""
+
+        val descriptionObj = bookJson.optJSONObject("description")
+        val description = descriptionObj?.optString("value") ?: bookJson.optString("description", "No description available.")
+
         return SimpleBookModel(
-            bookJSONObject.getString("book_id"),
-            bookJSONObject.getString("name"),
-            bookJSONObject.getString("cover"),
-            bookJSONObject.getString("url"),
-            extrasString
+            id = id,
+            name = title,
+            cover = coverUrl,
+            url = OPEN_LIBRARY_API_URL + id,
+            extras = description
         )
     }
 
+    private fun parseBookDocs(items: MutableList<BookModel>, docsArray: JSONArray) {
+        for (i in 0 until docsArray.length()) {
+            val bookJson = docsArray.getJSONObject(i)
+            val title = bookJson.optString("title", "No Title")
+            val id = bookJson.optString("key", "")
 
-    fun fetchAwardedItems(): List<AwardedBookModel> {
-
-        val items = mutableListOf<AwardedBookModel>()
-
-
-        try {
-            val request = Request.Builder()
-                .url("https://hapi-books.p.rapidapi.com/top/2022")
-                .get()
-                .addHeader(
-                    "X-RapidAPI-Key", API_KEY
-                )
-                .addHeader(
-                    "X-RapidAPI-Host", API_HOST
-                )
-                .build()
-
-            val response = client.newCall(request).execute()
-
-            response.body.string().let { jsonString ->
-                if (response.isSuccessful)
-                    parseAwardedItems(items, jsonString)
-                else throw IOException(jsonString)
+            val coverId = bookJson.optLong("cover_i", -1).let {
+                if (it != -1L) it else bookJson.optLong("cover_id", -1)
             }
-        } catch (err: IOException) {
-            Log.e(TAG, "Failed to fetch awarded items", err)
-        }
+            val coverUrl = if (coverId != -1L) "$OPEN_LIBRARY_COVERS_URL/b/id/$coverId-L.jpg" else ""
 
-        return items
+            var authors = "Unknown Author"
+            val authorsNameArray = bookJson.optJSONArray("author_name")
+            if (authorsNameArray != null && authorsNameArray.length() > 0) {
+                authors = (0 until authorsNameArray.length()).joinToString(", ") {
+                    authorsNameArray.getString(it)
+                }
+            } else {
+                // If not found, check for "authors" (a list of objects from Subjects)
+                val authorsArray = bookJson.optJSONArray("authors")
+                if (authorsArray != null && authorsArray.length() > 0) {
+                    authors = (0 until authorsArray.length()).joinToString(", ") {
+                        authorsArray.getJSONObject(it).optString("name", "")
+                    }
+                }
+            }
 
-    }
-
-    private fun parseAwardedItems(items: MutableList<AwardedBookModel>, jsonString: String) {
-
-        val bookArray = JSONArray(jsonString)
-
-        for (i in 0 until bookArray.length()) {
-            val bookJSONObject: JSONObject = bookArray.getJSONObject(i)
-            val item = AwardedBookModel(
-                bookJSONObject.getString("book_id"),
-                bookJSONObject.getString("category"),
-                bookJSONObject.getString("name"),
-                bookJSONObject.getString("cover"),
-                bookJSONObject.getString("url")
-            )
-
-            items.add(item)
+            items.add(SimpleBookModel(
+                id = id,
+                name = title,
+                cover = coverUrl,
+                url = OPEN_LIBRARY_API_URL + id,
+                extras = authors
+            ))
         }
     }
 }

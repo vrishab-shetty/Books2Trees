@@ -5,11 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.data.local.DataStoreManager
 import com.company.books2trees.data.repository.BookRepository
 import com.company.books2trees.data.repository.BookRepository.Companion.DEFAULT_GENRE
-import com.company.books2trees.data.repository.BookRepository.GenreList
-import com.company.books2trees.data.local.DataStoreManager
+import com.company.books2trees.domain.model.BookModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -23,7 +22,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     val selectedFilter: LiveData<String>
         get() = _selectedFilter
 
-    val genreList = GenreList.toList()
+    val genreList = BookRepository.getGenres()
 
 
     private var query: String? = null
@@ -41,7 +40,8 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                 try {
                     val result = BookRepository.search(
                         query,
-                        selectedFilter.value)
+                        selectedFilter.value
+                    )
                     ResultViewState.Content(result)
                 } catch (t: Throwable) {
                     ResultViewState.Error(t)
@@ -80,7 +80,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
 //      To add this feature, the caching need to remove
-        query?.let{ search(it) }
+        query?.let { search(it) }
     }
 
 
