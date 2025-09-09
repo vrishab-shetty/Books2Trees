@@ -12,33 +12,36 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/background_card"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="2.0dip"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardElevation="0.0dip">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:padding="8dp">
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="114dp"
-                android:layout_height="180dp"
-                android:layout_margin="8dp"
+                android:id="@+id/book_cover_card"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:background="?boxBackgroundColor"
-                android:elevation="10dp"
-                app:cardCornerRadius="@dimen/rounded_image_radius">
+                app:cardCornerRadius="@dimen/rounded_image_radius"
+                app:cardElevation="4dp"
+                app:layout_constraintDimensionRatio="H,2:3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/book_cover"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/book_caption"
+                    android:scaleType="centerCrop"
                     app:imageUrl="@{model.cover}" />
 
 
@@ -46,40 +49,35 @@
 
             <TextView
                 android:id="@+id/book_name"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:maxLines="1"
-                android:minLines="1"
-                android:paddingStart="5.0dp"
-                android:paddingTop="5.0dp"
-                android:paddingEnd="5.0dp"
+                android:maxLines="2"
                 android:text="@{model.name}"
                 android:textSize="13sp"
                 android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/book_cover_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="Hook, Line, and Sinker (Bellinger Sisters, #2)" />
 
             <TextView
-                android:id="@+id/rating"
-                android:layout_width="match_parent"
+                android:id="@+id/description"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="8dp"
-                android:ellipsize="end"
+                android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:maxLines="1"
-                android:minLines="1"
-                android:paddingStart="5dp"
-                android:paddingEnd="5.0dp"
-                android:paddingBottom="5.0dp"
                 android:text="@{model.extras}"
                 android:textSize="13sp"
-                tools:text="4.12 \u2605" />
+                app:layout_constraintTop_toBottomOf="@id/book_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Author" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </layout>

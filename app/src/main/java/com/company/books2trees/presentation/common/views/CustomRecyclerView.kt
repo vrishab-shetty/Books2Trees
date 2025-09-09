@@ -7,6 +7,7 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
+import androidx.core.content.withStyledAttributes
 
 class CustomGridLayoutManager(val context: Context, _spanCount: Int) :
     GridLayoutManager(context, _spanCount) {
@@ -123,7 +124,7 @@ class CustomGridLayoutManager(val context: Context, _spanCount: Int) :
 class AutoFitRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     RecyclerView(context, attrs) {
 
-    private val manager = CustomGridLayoutManager(context, 2) // THIS CONTROLS SPANS
+    val manager = CustomGridLayoutManager(context, 2) // THIS CONTROLS SPANS
 
     private var columnWidth = -1
 
@@ -135,15 +136,12 @@ class AutoFitRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
             }
         }
 
-    val itemWidth: Int
-        get() = measuredWidth / manager.spanCount
-
     init {
         if (attrs != null) {
             val attrsArray = intArrayOf(R.attr.columnWidth)
-            val array = context.obtainStyledAttributes(attrs, attrsArray)
-            columnWidth = array.getDimensionPixelSize(0, -1)
-            array.recycle()
+            context.withStyledAttributes(attrs, attrsArray) {
+                columnWidth = getDimensionPixelSize(0, -1)
+            }
         }
 
         layoutManager = manager

@@ -20,6 +20,7 @@ import com.company.books2trees.presentation.common.AppAdManager
 import com.company.books2trees.presentation.common.adapter.BookListAdapter
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.common.views.AutoFitRecyclerView
+import com.company.books2trees.presentation.common.views.GridSpacingItemDecoration
 import com.company.books2trees.presentation.home.adapter.HomeAdapter
 import com.company.books2trees.presentation.home.adapter.HomePageList
 import com.company.books2trees.presentation.home.adapter.HomePageListItem
@@ -123,10 +124,21 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
             val recyclerView = findViewById<AutoFitRecyclerView>(R.id.home_expanded_recycler)
             recyclerView?.apply {
+
+                val spacingInPixels = resources.getDimensionPixelSize(R.dimen.grid_item_spacing) // e.g., 8dp
+                addItemDecoration(
+                    GridSpacingItemDecoration(
+                        manager.spanCount,
+                        spacingInPixels,
+                        true
+                    )
+                )
+
                 adapter = BookListAdapter(
                     layoutInflater,
                     this@HomeFragment,
-                    null
+                    null,
+                    R.layout.item_book_grid
                 ).also { it.submitList(books) }
             }
             show()

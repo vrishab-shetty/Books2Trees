@@ -66,7 +66,7 @@ class HomeAdapter(
         binding.root
     ), OnBookLongPressed {
         private val bookListAdapter =
-            BookListAdapter(layoutInflater, listener, this)
+            BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
 
         init {
             binding.bookList.adapter = bookListAdapter
@@ -95,7 +95,7 @@ class HomeAdapter(
     inner class ParentViewHolder(private val binding: ItemHomePageListBinding) : RecyclerView.ViewHolder(
         binding.root
     ), OnBookLongPressed {
-        private val bookListAdapter = BookListAdapter(layoutInflater, listener, this)
+        private val bookListAdapter = BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
 
         init {
             binding.bookList.adapter = bookListAdapter
