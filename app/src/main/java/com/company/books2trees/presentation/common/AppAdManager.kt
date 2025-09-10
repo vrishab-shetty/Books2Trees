@@ -11,7 +11,6 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
 object AppAdManager {
 
-    private var TAG = "AppAdManager"
     private var rewardedAd: RewardedAd? = null
     private var isMobileAdsInitialized = false
 

@@ -24,7 +24,7 @@ class SearchViewModel(
     // The ViewModel now depends only on Use Cases
     private val searchBooks: SearchBooksUseCase,
     private val addRecentBook: AddRecentBookUseCase,
-    private val getGenres: GetGenresUseCase,
+    getGenres: GetGenresUseCase,
     getSearchFilter: GetSearchFilterUseCase, // Used in init
     private val setSearchFilter: SetSearchFilterUseCase
 ) : ViewModel() {

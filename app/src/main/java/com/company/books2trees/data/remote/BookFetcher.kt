@@ -14,7 +14,6 @@ import java.util.Locale
 
 object BookFetcher {
 
-    private const val TAG = "BookFetcher-Gson"
     private const val OPEN_LIBRARY_API_URL = "https://openlibrary.org"
 
     private val client = OkHttpClient()
@@ -68,7 +67,7 @@ object BookFetcher {
             }
             val jsonString = response.body.string()
             return gson.fromJson(jsonString, T::class.java)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             return null
         }
     }

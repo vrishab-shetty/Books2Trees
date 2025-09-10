@@ -26,7 +26,6 @@ class ViewPagerAdapter(
     private val viewModel: ProfileViewModel
 ) : RecyclerView.Adapter<PageViewHolder>() {
 
-    private val TAG = "ViewPagerAdapter"
     private val privatePage: Int = 1
 
     private var pages = items.associate { it.categoryId to it.items }

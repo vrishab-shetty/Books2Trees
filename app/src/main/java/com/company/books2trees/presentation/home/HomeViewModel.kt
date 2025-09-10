@@ -32,8 +32,6 @@ class HomeViewModel(
     val items: StateFlow<HomeViewState>
         get() = _items
 
-    private val _recentList = getRecentBooks()
-
     init {
         fetchHomeScreenContent()
     }

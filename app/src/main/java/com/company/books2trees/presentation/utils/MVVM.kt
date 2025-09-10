@@ -3,8 +3,6 @@ package com.company.books2trees.presentation.utils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
@@ -12,14 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.observe(this) { it?.let { t -> action(t) } }
-}
-
-fun <T> LifecycleOwner.observeNullable(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.observe(this) { action(it) }
-}
 
 fun <T> AppCompatActivity.collectLatestLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
     lifecycleScope.launch {
