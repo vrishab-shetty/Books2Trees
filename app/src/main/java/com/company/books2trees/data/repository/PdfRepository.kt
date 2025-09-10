@@ -4,17 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
-import com.company.books2trees.presentation.common.PdfViewState
-import com.company.books2trees.domain.model.PdfModel
-import com.company.books2trees.presentation.info.PdfModelViewState
 import com.company.books2trees.data.utils.FileUtils
+import com.company.books2trees.domain.model.PdfModel
+import com.company.books2trees.presentation.common.PdfViewState
+import com.company.books2trees.presentation.info.PdfModelViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import androidx.core.net.toUri
 
 object PdfRepository {
 
@@ -50,7 +50,6 @@ object PdfRepository {
             PdfModelViewState.Content(model)
 
         } catch (ioe: IOException) {
-            Log.e("PdfRepository", "Couldn't get the file details", ioe)
             PdfModelViewState.Error(ioe)
         }
     }
@@ -69,7 +68,7 @@ object PdfRepository {
 
                 pdfList.postValue(list)
 
-                FileUtils.deleteFileWithUri(context, Uri.parse(it.thumbnail))
+                FileUtils.deleteFileWithUri(context, it.thumbnail!!.toUri())
             }
         }
 

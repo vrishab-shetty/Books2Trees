@@ -2,7 +2,6 @@ package com.company.books2trees.presentation.profile
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.widget.SearchView
@@ -158,8 +157,6 @@ class ProfileFragment :
                 data = it.toUri()
             })
         }
-
-        Log.i("TAG", "openBook: ")
     }
 
     private fun deleteBook(model: BookModel) {

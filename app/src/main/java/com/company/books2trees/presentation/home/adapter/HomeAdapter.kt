@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.R
 import com.company.books2trees.databinding.ItemHomePageListBinding
+import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.common.adapter.BookListAdapter
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.presentation.home.callbacks.OnBookLongPressed
-import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.utils.UIHelper.popupMenuNoIcons
 
 class HomeAdapter(
@@ -20,7 +20,7 @@ class HomeAdapter(
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
 ) : ListAdapter<HomePageListItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
-    interface Listener: OnBookClicked {
+    interface Listener : OnBookClicked {
         fun onListHeadingClicked(title: String, books: List<BookModel>)
         fun onBookAddToFavorites(book: BookModel)
         fun onBookRemove(book: BookModel)
@@ -95,7 +95,8 @@ class HomeAdapter(
     inner class ParentViewHolder(private val binding: ItemHomePageListBinding) : RecyclerView.ViewHolder(
         binding.root
     ), OnBookLongPressed {
-        private val bookListAdapter = BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
+        private val bookListAdapter =
+            BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
 
         init {
             binding.bookList.adapter = bookListAdapter
@@ -113,7 +114,7 @@ class HomeAdapter(
 
         override fun showOptionsMenu(model: BookModel, itemView: View) {
             val options = listOf(R.string.add_to_favorite)
-            itemView.popupMenuNoIcons(options.mapIndexed { index, value -> Pair(index, value)}) {
+            itemView.popupMenuNoIcons(options.mapIndexed { index, value -> Pair(index, value) }) {
                 when (itemId) {
                     0 -> listener.onBookAddToFavorites(model)
                 }

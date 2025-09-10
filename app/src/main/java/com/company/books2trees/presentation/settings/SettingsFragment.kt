@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import com.company.books2trees.presentation.common.OnViewProfile
 import com.company.books2trees.R
-import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentSettingsBinding
+import com.company.books2trees.presentation.common.OnViewProfile
+import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.common.dialog.BasicAlertDialog
 import com.company.books2trees.presentation.signin.SignInActivity
 import com.company.books2trees.presentation.utils.UIHelper.navigateTo

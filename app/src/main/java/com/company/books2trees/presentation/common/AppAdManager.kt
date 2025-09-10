@@ -2,7 +2,6 @@ package com.company.books2trees.presentation.common
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
@@ -40,12 +39,10 @@ object AppAdManager {
             adRequest,
             object : RewardedAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d(TAG, adError.toString())
                     rewardedAd = null
                 }
 
                 override fun onAdLoaded(ad: RewardedAd) {
-                    Log.d(TAG, "Ad was loaded.")
                     rewardedAd = ad
                 }
             }
@@ -54,7 +51,6 @@ object AppAdManager {
 
     fun showAd(activity: Activity, onRewardGranted: () -> Unit) {
         if (rewardedAd == null) {
-            Log.d(TAG, "The rewarded ad wasn't ready yet.")
             loadAd(activity)
             return
         }
@@ -75,7 +71,6 @@ object AppAdManager {
 
         rewardedAd?.show(activity) {
             wasRewardGranted = true
-            Log.d(TAG, "user earned the reward.")
         }
     }
 

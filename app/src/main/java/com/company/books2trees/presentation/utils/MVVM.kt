@@ -42,14 +42,15 @@ abstract class DiffAdapter<T>(
     val comparison: (first: T, second: T) -> Boolean = { first, second ->
         first.hashCode() == second.hashCode()
     }
-) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int {
         return items.size
     }
 
     fun updateList(newList: List<T>) {
         val diffResult = DiffUtil.calculateDiff(
-            DiffCallback(this.items, newList))
+            DiffCallback(this.items, newList)
+        )
 
         items.clear()
         items.addAll(newList)

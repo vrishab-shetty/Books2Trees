@@ -14,8 +14,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.R
+import com.company.books2trees.data.local.mapper.toBookModel
 import com.company.books2trees.databinding.FragmentHomeBinding
-import com.company.books2trees.domain.model.BookMapper.toBookModel
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.common.AppAdManager
 import com.company.books2trees.presentation.common.adapter.BookListAdapter

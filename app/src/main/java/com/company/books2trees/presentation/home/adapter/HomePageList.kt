@@ -1,6 +1,5 @@
 package com.company.books2trees.presentation.home.adapter
 
-import androidx.recyclerview.widget.DiffUtil
 import com.company.books2trees.domain.model.BookModel
 
 data class HomePageList(

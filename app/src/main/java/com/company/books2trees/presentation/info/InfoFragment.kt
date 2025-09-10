@@ -7,13 +7,13 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.R
-import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentInfoBinding
-import com.company.books2trees.presentation.info.adapter.PdfListAdapter
 import com.company.books2trees.domain.model.PdfModel
+import com.company.books2trees.presentation.common.base.ViewBindingFragment
+import com.company.books2trees.presentation.info.adapter.PdfListAdapter
 import com.company.books2trees.presentation.utils.UIHelper.navigateTo
 
-class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBinding::inflate){
+class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBinding::inflate) {
 
     private lateinit var adapter: PdfListAdapter
     private val vm: InfoViewModel by viewModels()
@@ -68,6 +68,7 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
     private fun deletePdf(model: PdfModel) {
         vm.onDeletePdf(model)
     }
+
     private fun openPdf(model: PdfModel) {
         activity?.navigateTo(R.id.viewPdfActivity, Bundle().apply { putString("id", model.id) })
     }

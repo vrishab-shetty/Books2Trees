@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.presentation.common.PdfViewState
-import com.company.books2trees.domain.model.PdfModel
 import com.company.books2trees.data.repository.PdfRepository
+import com.company.books2trees.domain.model.PdfModel
+import com.company.books2trees.presentation.common.PdfViewState
 import kotlinx.coroutines.launch
 
 

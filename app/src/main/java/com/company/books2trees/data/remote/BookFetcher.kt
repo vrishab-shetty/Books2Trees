@@ -1,11 +1,10 @@
 package com.company.books2trees.data.remote
 
-import android.util.Log
-import com.company.books2trees.data.repository.BookRepository
 import com.company.books2trees.data.remote.dto.BookDetailDto
 import com.company.books2trees.data.remote.dto.SearchResultDto
 import com.company.books2trees.data.remote.dto.SubjectResultDto
 import com.company.books2trees.data.remote.dto.TrendingBooksDto
+import com.company.books2trees.data.repository.BookRepositoryImpl
 import com.google.gson.Gson
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -22,13 +21,11 @@ object BookFetcher {
     private val gson = Gson()
 
     fun fetchTrendingBooks(): TrendingBooksDto? {
-        Log.d(TAG, "fetchTrendingBooks called")
         val url = "$OPEN_LIBRARY_API_URL/trending/weekly.json?limit=20"
         return fetchAndParse(url)
     }
 
     fun fetchBooksBySubject(subject: String, limit: Int = 20): SubjectResultDto? {
-        Log.d(TAG, "fetchBooksBySubject called")
         val formattedSubject = subject.trim().replace(" ", "_").lowercase(Locale.getDefault())
         val url = "$OPEN_LIBRARY_API_URL/subjects/$formattedSubject.json?limit=$limit"
         return fetchAndParse(url)
@@ -70,10 +67,8 @@ object BookFetcher {
                 throw IOException("Unsuccessful response code: ${response.code}")
             }
             val jsonString = response.body.string()
-            Log.d(TAG, "jsonString: $jsonString")
             return gson.fromJson(jsonString, T::class.java)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to fetch or parse from $url", e)
             return null
         }
     }

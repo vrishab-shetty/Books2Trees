@@ -13,7 +13,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        SettingsFragment.setUpToolbar(this,R.string.settings_general)
+        SettingsFragment.setUpToolbar(this, R.string.settings_general)
     }
 
 }

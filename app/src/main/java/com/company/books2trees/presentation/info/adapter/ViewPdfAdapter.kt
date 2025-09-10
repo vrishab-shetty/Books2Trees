@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.company.books2trees.databinding.ItemViewPdfBinding
 import com.company.books2trees.data.repository.PdfRepository.renderAndClose
+import com.company.books2trees.databinding.ItemViewPdfBinding
 
 class ViewPdfAdapter(
     private var renderer: PdfRenderer?,

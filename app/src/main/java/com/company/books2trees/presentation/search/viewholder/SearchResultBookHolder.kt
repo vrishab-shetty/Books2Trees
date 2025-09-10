@@ -2,8 +2,8 @@ package com.company.books2trees.presentation.search.viewholder
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.company.books2trees.databinding.ItemSearchResultBookBinding
-import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 
 class SearchResultBookHolder(
     private val binding: ItemSearchResultBookBinding,

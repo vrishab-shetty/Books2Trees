@@ -2,12 +2,12 @@ package com.company.books2trees.presentation.utils
 
 import androidx.lifecycle.Observer
 
-class Event<out T>(private val content: T){
+class Event<out T>(private val content: T) {
 
     private var hasBeenHandled: Boolean = false
 
     fun handle(handle: (T) -> Unit) {
-        if(!hasBeenHandled) {
+        if (!hasBeenHandled) {
             hasBeenHandled = true
             handle(content)
         }
