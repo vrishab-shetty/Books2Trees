@@ -5,6 +5,7 @@ import android.util.LruCache
 import com.company.books2trees.data.local.BookDatabase
 import com.company.books2trees.data.model.RecentItem
 import com.company.books2trees.data.remote.BookFetcher
+import com.company.books2trees.domain.model.BookMapper.toBookModel
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.utils.UIHelper
 import com.company.books2trees.presentation.utils.UIHelper.AWARDED_BOOKS_POSITION
@@ -33,12 +34,16 @@ class BookRepository(private val context: Context) {
 
         suspend fun search(query: String, filter: String?): List<BookModel> =
             withContext(Dispatchers.IO) {
-                var results: List<BookModel>?
-                synchronized(searchCache) {
-                    results = searchCache.get(Pair(query, filter ?: DEFAULT_GENRE))
+                val cacheKey = Pair(query, filter ?: DEFAULT_GENRE)
+
+                searchCache.get(cacheKey) ?: run {
+                    val searchResultDto = BookFetcher.searchBook(query, filter)
+                    val displayModels =
+                        searchResultDto?.searchResults?.map { it.toBookModel() } ?: emptyList()
+
+                    searchCache.put(cacheKey, displayModels)
+                    displayModels
                 }
-                results ?: BookFetcher.searchBook(query, filter)
-                    .also { searchCache.put(Pair(query, filter ?: DEFAULT_GENRE), it) }
             }
     }
 
@@ -61,30 +66,37 @@ class BookRepository(private val context: Context) {
         result
     }
 
-    private fun fetchPopularBooks() = BookFetcher.fetchTrendingBooks()
+    private suspend fun fetchPopularBooks(): List<BookModel> {
+        val trendingBooksDto = BookFetcher.fetchTrendingBooks()
+        return trendingBooksDto?.works?.map { it.toBookModel() } ?: emptyList()
+    }
 
     /**
      *  You can easily swap "pulitzer_prize" with other famous awards:
      *
-         * national_book_award: For winners of the U.S. National Book Award.
-         * booker_prize: For winners of the prestigious Booker Prize for fiction.
-         * hugo_award: If you want to feature award-winning Science Fiction.
-         * newbery_medal: For acclaimed works of children's literature.
+     * national_book_award: For winners of the U.S. National Book Award.
+     * booker_prize: For winners of the prestigious Booker Prize for fiction.
+     * hugo_award: If you want to feature award-winning Science Fiction.
+     * newbery_medal: For acclaimed works of children's literature.
      *
      */
     private fun fetchAwardedBooks(): List<BookModel> {
-        return listOf(
-            BookFetcher.fetchBooksBySubject("national_book_award", limit = 5),
-            BookFetcher.fetchBooksBySubject("booker_prize", limit = 5),
-            BookFetcher.fetchBooksBySubject("newbery_medal", limit = 5)
-        ).flatten()
+        val subjects = listOf(
+            "national_book_award",
+            "booker_prize",
+            "newbery_medal"
+        )
+        return subjects.flatMap { subject ->
+            BookFetcher.fetchBooksBySubject(subject, limit = 5)?.works?.map { it.toBookModel() }
+                ?: emptyList()
+        }
     }
 
     suspend fun insertRecent(model: BookModel) = withContext(Dispatchers.IO) {
         val db = BookDatabase[context]
         val entity = RecentItem()
         entity.id = model.id
-        entity.extras = model.extras
+        entity.extras = model.subtext
         entity.imgUrl = model.cover
         entity.title = model.name
         entity.url = model.url

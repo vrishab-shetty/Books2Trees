@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.R
 import com.company.books2trees.databinding.FragmentHomeBinding
+import com.company.books2trees.domain.model.BookMapper.toBookModel
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.common.AppAdManager
 import com.company.books2trees.presentation.common.adapter.BookListAdapter
@@ -125,7 +126,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             val recyclerView = findViewById<AutoFitRecyclerView>(R.id.home_expanded_recycler)
             recyclerView?.apply {
 
-                val spacingInPixels = resources.getDimensionPixelSize(R.dimen.grid_item_spacing) // e.g., 8dp
+                val spacingInPixels =
+                    resources.getDimensionPixelSize(R.dimen.grid_item_spacing) // e.g., 8dp
                 addItemDecoration(
                     GridSpacingItemDecoration(
                         manager.spanCount,

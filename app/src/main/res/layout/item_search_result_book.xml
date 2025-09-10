@@ -33,11 +33,11 @@
 
                 <ImageView
                     android:id="@+id/book_cover"
-                    app:imageUrl="@{model.cover}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/book_caption"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{model.cover}" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -53,10 +53,10 @@
                     android:id="@+id/book_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{model.name}"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:minLines="2"
+                    android:text="@{model.name}"
                     android:textColor="@color/textColor"
                     android:textStyle="bold"
                     tools:text="The Walking Dead, Book One" />
@@ -68,7 +68,7 @@
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:minLines="2"
-                    android:text="@{model.extras}"
+                    android:text="@{model.subtext}"
                     android:textColor="@color/grayTextColor"
                     tools:text="Robert Kirkman, Tony Moore, Charlie Adlard" />
             </LinearLayout>

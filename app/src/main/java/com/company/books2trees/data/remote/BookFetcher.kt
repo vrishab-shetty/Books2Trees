@@ -2,164 +2,80 @@ package com.company.books2trees.data.remote
 
 import android.util.Log
 import com.company.books2trees.data.repository.BookRepository
-import com.company.books2trees.domain.model.BookModel
-import com.company.books2trees.domain.model.SimpleBookModel
+import com.company.books2trees.data.remote.dto.BookDetailDto
+import com.company.books2trees.data.remote.dto.SearchResultDto
+import com.company.books2trees.data.remote.dto.SubjectResultDto
+import com.company.books2trees.data.remote.dto.TrendingBooksDto
+import com.google.gson.Gson
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.IOException
 import java.util.Locale
 
 object BookFetcher {
 
-    private const val TAG = "BookFetcher"
+    private const val TAG = "BookFetcher-Gson"
     private const val OPEN_LIBRARY_API_URL = "https://openlibrary.org"
-    private const val OPEN_LIBRARY_COVERS_URL = "https://covers.openlibrary.org"
 
     private val client = OkHttpClient()
+    private val gson = Gson()
 
-    fun fetchTrendingBooks(): List<BookModel> {
-        val items = mutableListOf<BookModel>()
+    fun fetchTrendingBooks(): TrendingBooksDto? {
+        Log.d(TAG, "fetchTrendingBooks called")
         val url = "$OPEN_LIBRARY_API_URL/trending/weekly.json?limit=20"
-
-        try {
-            val request = Request.Builder().url(url).build()
-            val response = client.newCall(request).execute()
-
-            response.body.string().let { jsonString ->
-                Log.d(TAG, "TRENDING RESPONSE: $jsonString")
-                if (response.isSuccessful) {
-                    val jsonResponse = JSONObject(jsonString)
-
-                    val worksArray = jsonResponse.getJSONArray("works")
-                    parseBookDocs(items, worksArray)
-                } else throw IOException("Unsuccessful response: ${response.message}")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to fetch trending books", e)
-        }
-        return items
+        return fetchAndParse(url)
     }
 
-    fun fetchBooksBySubject(subject: String, limit: Int = 20): List<BookModel> {
-        val items = mutableListOf<BookModel>()
-        val url = "$OPEN_LIBRARY_API_URL/subjects/$subject.json?limit=$limit&details=true"
-
-        try {
-            val request = Request.Builder().url(url).build()
-            val response = client.newCall(request).execute()
-
-            response.body.string().let { jsonString ->
-                Log.d(TAG, "SUBJECT RESPONSE ($subject): $jsonString")
-                if (response.isSuccessful) {
-                    val jsonResponse = JSONObject(jsonString)
-                    val worksArray = jsonResponse.getJSONArray("works")
-                    parseBookDocs(items, worksArray)
-                } else throw IOException("Unsuccessful response: ${response.message}")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to fetch subject: $subject", e)
-        }
-        return items
+    fun fetchBooksBySubject(subject: String, limit: Int = 20): SubjectResultDto? {
+        Log.d(TAG, "fetchBooksBySubject called")
+        val formattedSubject = subject.trim().replace(" ", "_").lowercase(Locale.getDefault())
+        val url = "$OPEN_LIBRARY_API_URL/subjects/$formattedSubject.json?limit=$limit"
+        return fetchAndParse(url)
     }
 
-    fun searchBook(query: String, filter: String? = null): List<BookModel> {
-        val items = mutableListOf<BookModel>()
+    fun searchBook(query: String, filter: String? = null): SearchResultDto? {
         val formattedQuery = query.trim().split("\\s+".toRegex()).joinToString("+")
-        val fields = "key,title,author_name,cover_i"
+        val fields = "key,title,author_name,cover_i,first_publish_year"
 
-        val urlBuilder = "$OPEN_LIBRARY_API_URL/search.json?q=$formattedQuery&fields=$fields".toHttpUrlOrNull()?.newBuilder()
+        val urlBuilder = "$OPEN_LIBRARY_API_URL/search.json?q=$formattedQuery&fields=$fields"
+            .toHttpUrlOrNull()
+            ?.newBuilder()
+            ?: return null // Return null if the base URL is invalid
+
         if (filter != null && filter != BookRepository.DEFAULT_GENRE) {
-            urlBuilder?.addQueryParameter("subject", filter.lowercase(Locale.getDefault()))
+            urlBuilder.addQueryParameter("subject", filter.lowercase(Locale.getDefault()))
         }
-        val url = urlBuilder?.build().toString()
 
-        try {
-            val request = Request.Builder().url(url).build()
-            val response = client.newCall(request).execute()
-            response.body.string().let { jsonString ->
-                if (response.isSuccessful) {
-                    val jsonResponse = JSONObject(jsonString)
-                    val docsArray = jsonResponse.getJSONArray("docs")
-                    parseBookDocs(items, docsArray)
-                } else throw IOException("Unsuccessful response: ${response.message}")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed on search query: $query", e)
-        }
-        return items
+        return fetchAndParse(urlBuilder.build().toString())
     }
 
-    fun fetchBookById(modelId: String): BookModel? {
-        val url = "$OPEN_LIBRARY_API_URL$modelId.json"
+    fun fetchBookById(workId: String): BookDetailDto? {
+        val url = "$OPEN_LIBRARY_API_URL$workId.json"
+        return fetchAndParse(url)
+    }
+
+    /**
+     * Generic function to execute a network request and parse the JSON response
+     * into a given DTO class using Gson.
+     * @param T The data class type to parse the JSON into.
+     * @param url The URL to fetch.
+     * @return A parsed DTO object of type T, or null if an error occurs.
+     */
+    private inline fun <reified T> fetchAndParse(url: String): T? {
         try {
             val request = Request.Builder().url(url).build()
             val response = client.newCall(request).execute()
-            return response.body.string().let { jsonString ->
-                if (response.isSuccessful) {
-                    parseSingleBook(jsonString)
-                } else {
-                    throw IOException("Unsuccessful response: ${response.message}")
-                }
+            if (!response.isSuccessful) {
+                throw IOException("Unsuccessful response code: ${response.code}")
             }
+            val jsonString = response.body.string()
+            Log.d(TAG, "jsonString: $jsonString")
+            return gson.fromJson(jsonString, T::class.java)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to fetch item with ID: $modelId", e)
+            Log.e(TAG, "Failed to fetch or parse from $url", e)
             return null
         }
     }
 
-    private fun parseSingleBook(jsonString: String): BookModel {
-        val bookJson = JSONObject(jsonString)
-        val title = bookJson.optString("title", "No Title")
-        val id = bookJson.optString("key", "")
-        val coversArray = bookJson.optJSONArray("covers")
-        val coverUrl = if (coversArray != null && coversArray.length() > 0) {
-            "$OPEN_LIBRARY_COVERS_URL/b/id/${coversArray.getInt(0)}-L.jpg"
-        } else ""
-        val descriptionObj = bookJson.optJSONObject("description")
-        val description = descriptionObj?.optString("value") ?: bookJson.optString("description", "No description available.")
-
-        return SimpleBookModel(
-            id = id,
-            name = title,
-            cover = coverUrl,
-            url = OPEN_LIBRARY_API_URL + id,
-            extras = description
-        )
-    }
-
-    private fun parseBookDocs(items: MutableList<BookModel>, docsArray: JSONArray) {
-        for (i in 0 until docsArray.length()) {
-            val bookJson = docsArray.getJSONObject(i)
-            val title = bookJson.optString("title", "No Title")
-            val id = bookJson.optString("key", "")
-            val coverId = bookJson.optLong("cover_i", -1).let {
-                if (it != -1L) it else bookJson.optLong("cover_id", -1)
-            }
-            val coverUrl = if (coverId != -1L) "$OPEN_LIBRARY_COVERS_URL/b/id/$coverId-L.jpg" else ""
-            var authors = "Unknown Author"
-            val authorsNameArray = bookJson.optJSONArray("author_name")
-            if (authorsNameArray != null && authorsNameArray.length() > 0) {
-                authors = (0 until authorsNameArray.length()).joinToString(", ") {
-                    authorsNameArray.getString(it)
-                }
-            } else {
-                val authorsArray = bookJson.optJSONArray("authors")
-                if (authorsArray != null && authorsArray.length() > 0) {
-                    authors = (0 until authorsArray.length()).joinToString(", ") {
-                        authorsArray.getJSONObject(it).optString("name", "")
-                    }
-                }
-            }
-            items.add(SimpleBookModel(
-                id = id,
-                name = title,
-                cover = coverUrl,
-                url = OPEN_LIBRARY_API_URL + id,
-                extras = authors
-            ))
-        }
-    }
 }
