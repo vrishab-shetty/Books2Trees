@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -36,8 +38,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+            javaParameters.set(true)
+        }
     }
 
 }
@@ -62,10 +67,12 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     implementation "io.insert-koin:koin-androidx-viewmodel:$koin_version"
     implementation 'com.google.firebase:firebase-auth:24.0.1'
-    implementation("androidx.credentials:credentials:$credentials_version")
-    implementation("androidx.credentials:credentials-play-services-auth:$credentials_version")
-    implementation("com.google.android.gms:play-services-ads:24.5.0")
+    implementation "androidx.credentials:credentials:$credentials_version"
+    implementation "androidx.credentials:credentials-play-services-auth:$credentials_version"
+    implementation "com.google.android.gms:play-services-ads:24.6.0"
     implementation 'com.google.android.libraries.identity.googleid:googleid:1.1.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+    implementation "com.google.code.gson:gson:2.13.1"
     kapt "androidx.room:room-compiler:$room_version"
 
     testImplementation 'junit:junit:4.13.2'
