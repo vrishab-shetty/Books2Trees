@@ -26,10 +26,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate), OnBookClicked {
 
-    private val vm: SearchViewModel by viewModels()
+    private val vm: SearchViewModel by viewModel()
     private lateinit var searchResultBookAdapter: SearchResultBookAdapter
     private var filterListView: ListView? = null
 
