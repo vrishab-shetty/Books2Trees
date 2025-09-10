@@ -1,7 +1,7 @@
 package com.company.books2trees.presentation.profile
 
 import androidx.recyclerview.widget.DiffUtil
-import com.company.books2trees.data.model.LibraryItem
+import com.company.books2trees.data.local.model.LibraryItem
 
 data class LibraryPageItem(
     val categoryId: CategoryId,
@@ -19,7 +19,7 @@ data class LibraryPageItem(
     class DiffCallback(
         private val oldList: List<LibraryPageItem>,
         private val newList: List<LibraryPageItem>
-    ): DiffUtil.Callback() {
+    ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldList.size
 
         override fun getNewListSize(): Int = newList.size

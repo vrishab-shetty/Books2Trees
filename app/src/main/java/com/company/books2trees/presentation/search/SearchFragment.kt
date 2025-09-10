@@ -3,7 +3,6 @@ package com.company.books2trees.presentation.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListAdapter
@@ -11,18 +10,22 @@ import android.widget.ListView
 import androidx.appcompat.widget.SearchView
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.company.books2trees.R
-import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.databinding.FragmentSearchBinding
-import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.presentation.common.base.ViewBindingFragment
+import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.presentation.search.adapter.SearchResultBookAdapter
 import com.company.books2trees.presentation.utils.UIHelper
 import com.company.books2trees.presentation.utils.UIHelper.hideKeyboard
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 
 class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate), OnBookClicked {
 
@@ -46,7 +49,7 @@ class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearch
             binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     query?.let {
-                        vm.search(query)
+                        vm.onQueryChanged(query)
                     }
                     hideKeyboard()
                     return false
@@ -63,38 +66,40 @@ class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearch
         }
 
 
-        vm.result.observe(viewLifecycleOwner) { viewState ->
-            when (viewState) {
-                is ResultViewState.Loading ->
-                    useBinding { binding ->
-                        binding.searchLoadingBar.visibility = View.VISIBLE
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    vm.result.collect { viewState ->
+                        when (viewState) {
+                            is ResultViewState.Loading ->
+                                useBinding { binding ->
+                                    binding.searchLoadingBar.visibility = View.VISIBLE
+                                }
 
-                is ResultViewState.Content -> {
-                    useBinding { binding ->
-                        binding.searchLoadingBar.visibility = View.GONE
+                            is ResultViewState.Content -> {
+                                useBinding { binding ->
+                                    binding.searchLoadingBar.visibility = View.GONE
+                                }
+                                searchResultBookAdapter.submitList(viewState.list)
+                            }
+
+                            is ResultViewState.Error -> {
+                                useBinding { binding ->
+                                    binding.searchLoadingBar.visibility = View.GONE
+                                }
+                            }
+                        }
                     }
-                    searchResultBookAdapter.submitList(viewState.list)
                 }
-
-                is ResultViewState.Error -> {
-                    useBinding { binding ->
-                        binding.searchLoadingBar.visibility = View.GONE
+                launch {
+                    vm.selectedFilter.collect { choice ->
+                        filterListView?.let {
+                            setSelectedItem(
+                                it, choice
+                            )
+                        }
                     }
-                    Log.e(
-                        "Search Fragment",
-                        "Exception Search Result",
-                        viewState.throwable
-                    )
                 }
-            }
-        }
-
-        vm.selectedFilter.observe(viewLifecycleOwner) { choice ->
-            filterListView?.let {
-                setSelectedItem(
-                    it, choice
-                )
             }
         }
     }
@@ -137,8 +142,6 @@ class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearch
             }
             show()
         }
-
-        vm.onFilterClicked()
     }
 
     private fun setSelectedItem(listView: ListView, choice: String? = null) {
@@ -156,7 +159,6 @@ class SearchFragment : ViewBindingFragment<FragmentSearchBinding>(FragmentSearch
     override fun openBook(model: BookModel) {
         // Open Book from URL
         // ...
-        Log.i("TAG", "openBook: ")
         vm.onBookClicked(model)
 
         model.url?.let {

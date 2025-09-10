@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.company.books2trees.data.model.RecentItem
+import com.company.books2trees.data.local.model.RecentItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao

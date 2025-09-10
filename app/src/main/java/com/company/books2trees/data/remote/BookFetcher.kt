@@ -40,7 +40,7 @@ object BookFetcher {
             ?.newBuilder()
             ?: return null // Return null if the base URL is invalid
 
-        if (filter != null && filter != BookRepository.DEFAULT_GENRE) {
+        if (filter != null && filter != BookRepositoryImpl.DEFAULT_GENRE) {
             urlBuilder.addQueryParameter("subject", filter.lowercase(Locale.getDefault()))
         }
 

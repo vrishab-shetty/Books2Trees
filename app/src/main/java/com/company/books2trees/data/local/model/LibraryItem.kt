@@ -1,4 +1,4 @@
-package com.company.books2trees.data.model
+package com.company.books2trees.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

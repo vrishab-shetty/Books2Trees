@@ -1,6 +1,5 @@
 package com.company.books2trees.presentation.profile.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.R
-import com.company.books2trees.data.model.LibraryItem
+import com.company.books2trees.data.local.model.LibraryItem
 import com.company.books2trees.databinding.LibraryViewpagerBinding
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
@@ -138,19 +137,18 @@ class ViewPagerAdapter(
                     }
 
                 if (item == null) {
-                    Log.e(TAG, "Item not found by id: ${model.id}")
                     return@popupMenuNoIcons
                 }
 
                 when (itemId) {
                     0 -> {
-                        viewModel.updateLibraryItem(item.apply {
+                        viewModel.onChangedCategory(item.apply {
                             categoryId = LibraryPageItem.CategoryId.Dropped
                         })
                     }
 
                     1 -> {
-                        viewModel.updateLibraryItem(item.apply {
+                        viewModel.onChangedCategory(item.apply {
                             categoryId = LibraryPageItem.CategoryId.OnHold
                         })
                     }

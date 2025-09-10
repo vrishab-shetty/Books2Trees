@@ -2,21 +2,28 @@ package com.company.books2trees.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.presentation.home.viewState.HomeViewState
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.use_case.AddRecentBookUseCase
+import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
+import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
+import com.company.books2trees.domain.use_case.InsertBookToLibraryUseCase
+import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
+import com.company.books2trees.domain.use_case.SearchBooksUseCase
+import com.company.books2trees.presentation.home.viewState.HomeViewState
 import com.company.books2trees.presentation.profile.LibraryPageItem
-import com.company.books2trees.data.repository.BookRepository
-import com.company.books2trees.data.repository.LibraryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 
 class HomeViewModel(
-    private val libraryRepository: LibraryRepository,
-    private val bookRepository: BookRepository
+    private val getHomePageBooks: GetHomePageBooksUseCase,
+    private val getRecentBooks: GetRecentBooksUseCase,
+    private val addRecentBook: AddRecentBookUseCase,
+    private val removeRecentBook: RemoveRecentBookUseCase,
+    private val searchBook: SearchBooksUseCase,
+    private val insertBookToLibrary: InsertBookToLibraryUseCase
 ) : ViewModel() {
 
     private val _items: MutableStateFlow<HomeViewState> = MutableStateFlow(
@@ -25,63 +32,53 @@ class HomeViewModel(
     val items: StateFlow<HomeViewState>
         get() = _items
 
-    private val _recentList = bookRepository.loadRecent()
+    private val _recentList = getRecentBooks()
 
     init {
-        fetchCombinedItems()
+        fetchHomeScreenContent()
     }
 
-    private fun fetchCombinedItems() {
+    private fun fetchHomeScreenContent() {
         viewModelScope.launch {
-            combine(_recentList, bookRepository.fetchItemsFlow()) { recent, mainItemsResult ->
-                if (mainItemsResult.isSuccess) {
-                    HomeViewState.Content(
-                        mainItemsResult.getOrThrow(),
-                        recent
-                    )
-                } else {
-                    HomeViewState.Error(mainItemsResult.exceptionOrNull()!!)
-                }
-            }.catch { e -> emit(HomeViewState.Error(e)) }
-                .collect { combinedState ->
-                    _items.value = combinedState
-                }
-        }
-    }
-
-    private fun addRecentItem(model: BookModel) {
-        viewModelScope.launch {
+            _items.value = HomeViewState.Loading
             try {
-                bookRepository.insertRecent(model)
-            } catch (t: Throwable) {
-                error("Insert Operation Unsuccessful ${t.message}")
+                // Perform the one-shot fetch for the main content
+                val mainItemsMap = getHomePageBooks()
+
+                // Now, collect the flow of recent items and combine it with the main content
+                getRecentBooks()
+                    .catch { exception ->
+                        // If recents flow fails, still show main content
+                        _items.value = HomeViewState.Content(mainItemsMap, emptyList())
+                        // Optionally log the exception
+                    }
+                    .collect { recentItems ->
+                        // On each update to recents, update the full state
+                        _items.value = HomeViewState.Content(mainItemsMap, recentItems)
+                    }
+
+            } catch (e: Exception) {
+                // This catches errors from getHomePageBooks()
+                _items.value = HomeViewState.Error(e)
             }
         }
     }
 
     fun onBookClicked(model: BookModel) {
-        addRecentItem(model)
+        viewModelScope.launch {
+            addRecentBook(model)
+        }
     }
 
     fun onRemoveClicked(model: BookModel) {
-
         viewModelScope.launch {
-            try {
-                bookRepository.deleteRecent(model.id)
-            } catch (_: Throwable) {
-                error("Delete Operation Unsuccessful")
-            }
+            removeRecentBook(model.id)
         }
-
     }
 
     fun insertToLibrary(model: BookModel, categoryId: LibraryPageItem.CategoryId) {
         viewModelScope.launch {
-            try {
-                libraryRepository.insert(model, categoryId)
-            } catch (_: Throwable) {
-                error("Insert Operation Unsuccessful")
-            }
+            insertBookToLibrary(model, categoryId)
         }
     }
 

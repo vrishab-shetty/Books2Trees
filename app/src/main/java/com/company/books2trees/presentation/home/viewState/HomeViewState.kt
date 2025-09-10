@@ -1,6 +1,6 @@
 package com.company.books2trees.presentation.home.viewState
 
-import com.company.books2trees.data.model.RecentItem
+import com.company.books2trees.data.local.model.RecentItem
 import com.company.books2trees.domain.model.BookModel
 
 sealed class HomeViewState {

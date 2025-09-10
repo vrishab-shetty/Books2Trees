@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.company.books2trees.data.model.LibraryItem
+import com.company.books2trees.data.local.model.LibraryItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao

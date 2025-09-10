@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.company.books2trees.data.model.LibraryItem
+import com.company.books2trees.data.local.mapper.toBookModel
+import com.company.books2trees.data.local.model.LibraryItem
 import com.company.books2trees.databinding.ItemLibraryBinding
-import com.company.books2trees.domain.model.BookMapper.toBookModel
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.presentation.home.callbacks.OnBookLongPressed
 import com.company.books2trees.presentation.utils.DiffAdapter

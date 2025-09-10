@@ -4,28 +4,27 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.company.books2trees.data.repository.BookRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-object DataStoreManager {
+class DataStoreManager(private val context: Context) {
 
-    private const val SEARCH_FILTER = "search_filter_preference"
-    private val Context.searchDataStore by preferencesDataStore(
-        name = SEARCH_FILTER
-    )
+    private val Context.searchDataStore by preferencesDataStore(name = "search_filter_preference")
 
     private object SearchPreferenceKeys {
         val GENRE = stringPreferencesKey("genre")
     }
 
-    suspend fun setSearchFilter(context: Context, genre: String){
+    suspend fun setSearchFilter(genre: String) {
         context.searchDataStore.edit { preference ->
             preference[SearchPreferenceKeys.GENRE] = genre
         }
     }
 
-    fun getSearchFilter(context: Context): Flow<String> = context.searchDataStore.data.map { preference ->
-        preference[SearchPreferenceKeys.GENRE] ?: BookRepository.Companion.DEFAULT_GENRE
+    // ToDo DataStoreManager shouldn't depend on BookRepositoryImpl
+    fun getSearchFilter(): Flow<String?> {
+        return context.searchDataStore.data.map { preference ->
+            preference[SearchPreferenceKeys.GENRE]
+        }
     }
 }
