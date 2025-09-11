@@ -25,8 +25,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
-    HomeAdapter.Listener {
+class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val vm: HomeViewModel by viewModel()
 
@@ -42,7 +41,30 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     }
 
     private fun setupPageList() {
-        homeAdapter = HomeAdapter(layoutInflater, this, viewPool)
+        homeAdapter = HomeAdapter(
+            layoutInflater, viewPool = viewPool,
+            listener = object : HomeAdapter.Listener {
+                override fun onBookAddToFavorites(book: BookModel) {
+                    vm.insertToLibrary(book, LibraryPageItem.CategoryId.PlanToRead)
+                }
+
+                override fun onBookRemove(book: BookModel) {
+                    vm.onRemoveClicked(book)
+                }
+
+                override fun onListHeadingClicked(
+                    title: String,
+                    books: List<BookModel>
+                ) {
+                    ExpandedBookListFragment.newInstance(title, books)
+                        .show(childFragmentManager, "ExpandedBookListFragment")
+                }
+
+                override fun openBook(model: BookModel) {
+                    this@HomeFragment.openBook(model)
+                }
+            }
+        )
         useBinding { binding ->
             binding.pageList.apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -82,7 +104,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         homeAdapter.submitList(items)
     }
 
-    override fun openBook(model: BookModel) {
+    fun openBook(model: BookModel) {
         vm.onBookClicked(model)
 
         if (AppAdManager.isAdReady()) {
@@ -96,19 +118,4 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         }
     }
 
-    override fun onListHeadingClicked(
-        title: String,
-        books: List<BookModel>
-    ) {
-        ExpandedBookListFragment.newInstance(title, books)
-            .show(childFragmentManager, "ExpandedBookListFragment")
-    }
-
-    override fun onBookAddToFavorites(book: BookModel) {
-        vm.insertToLibrary(book, LibraryPageItem.CategoryId.PlanToRead)
-    }
-
-    override fun onBookRemove(book: BookModel) {
-        vm.onRemoveClicked(book)
-    }
 }

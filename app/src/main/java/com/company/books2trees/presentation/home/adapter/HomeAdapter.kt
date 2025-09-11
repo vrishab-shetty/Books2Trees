@@ -16,8 +16,8 @@ import com.company.books2trees.presentation.utils.UIHelper.popupMenuNoIcons
 
 class HomeAdapter(
     private val layoutInflater: LayoutInflater,
-    private val listener: Listener,
-    private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
+    private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool(),
+    private val listener: Listener
 ) : ListAdapter<HomePageListItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     interface Listener : OnBookClicked {
