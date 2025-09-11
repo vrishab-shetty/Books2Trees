@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.company.books2trees.data.local.mapper.toBookModel
 import com.company.books2trees.databinding.FragmentHomeBinding
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.common.AppAdManager
@@ -73,7 +72,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     private fun updateAdapterList(content: HomeViewState.Content) {
         val items = mutableListOf<HomePageListItem>()
 
-        content.recentItems.map { it.toBookModel() }.takeIf { it.isNotEmpty() }?.let {
+        content.recentItems.takeIf { it.isNotEmpty() }?.let {
             items.add(HomePageListItem.RecentBooks(it))
         }
 

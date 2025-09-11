@@ -1,6 +1,5 @@
 package com.company.books2trees.domain.repository
 
-import com.company.books2trees.data.local.model.RecentItem
 import com.company.books2trees.domain.model.BookModel
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +10,7 @@ interface BookRepository {
     suspend fun searchBooks(query: String, filter: String?): List<BookModel>
     suspend fun addRecentBook(model: BookModel)
     suspend fun removeRecentBook(id: String)
-    fun getRecentBooksFlow(): Flow<List<RecentItem>>
+    fun getRecentBooksFlow(): Flow<List<BookModel>>
 
     fun getSearchFilterFlow(): Flow<String>
     suspend fun setSearchFilter(filter: String)

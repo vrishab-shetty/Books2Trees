@@ -3,8 +3,8 @@ package com.company.books2trees.data.repository
 import android.util.LruCache
 import com.company.books2trees.data.local.BookLocalDataSource
 import com.company.books2trees.data.local.DataStoreManager
+import com.company.books2trees.data.local.mapper.toBookModel
 import com.company.books2trees.data.local.mapper.toRecentItemEntity
-import com.company.books2trees.data.local.model.RecentItem
 import com.company.books2trees.data.remote.BookFetcher
 import com.company.books2trees.data.remote.mapper.toBookModel
 import com.company.books2trees.domain.model.BookModel
@@ -40,7 +40,6 @@ class BookRepositoryImpl(
         subjectResultDto?.works?.map { it.toBookModel() } ?: emptyList()
     }
 
-    // ToDo separate caching
     override suspend fun searchBooks(query: String, filter: String?): List<BookModel> =
         withContext(Dispatchers.IO) {
             val cacheKey = Pair(query, filter ?: DEFAULT_GENRE)
@@ -64,8 +63,12 @@ class BookRepositoryImpl(
         localDataSource.deleteRecentItem(id)
     }
 
-    override fun getRecentBooksFlow(): Flow<List<RecentItem>> {
-        return localDataSource.getAllRecentItems()
+    override fun getRecentBooksFlow(): Flow<List<BookModel>> {
+        return localDataSource.getAllRecentItems().map { recentItems ->
+            recentItems.map {
+                it.toBookModel()
+            }
+        }
     }
 
     override fun getSearchFilterFlow(): Flow<String> {
