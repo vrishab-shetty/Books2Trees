@@ -8,7 +8,6 @@ import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.InsertBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
-import com.company.books2trees.domain.use_case.SearchBooksUseCase
 import com.company.books2trees.presentation.home.viewState.HomeViewState
 import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +21,6 @@ class HomeViewModel(
     private val getRecentBooks: GetRecentBooksUseCase,
     private val addRecentBook: AddRecentBookUseCase,
     private val removeRecentBook: RemoveRecentBookUseCase,
-    private val searchBook: SearchBooksUseCase,
     private val insertBookToLibrary: InsertBookToLibraryUseCase
 ) : ViewModel() {
 

@@ -27,7 +27,6 @@ val viewModelModule = module {
             getRecentBooks = get<GetRecentBooksUseCase>(),
             addRecentBook = get<AddRecentBookUseCase>(),
             removeRecentBook = get<RemoveRecentBookUseCase>(),
-            searchBook = get<SearchBooksUseCase>(),
             insertBookToLibrary = get<InsertBookToLibraryUseCase>()
         )
     }
