@@ -45,8 +45,13 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        homeAdapter = HomeAdapter(layoutInflater, this, viewPool)
+        setupPageList()
+        observeViewModel()
 
+    }
+
+    private fun setupPageList() {
+        homeAdapter = HomeAdapter(layoutInflater, this, viewPool)
         useBinding { binding ->
             binding.pageList.apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -54,9 +59,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 setHasFixedSize(true)
             }
         }
-
-        observeViewModel()
-
     }
 
     private fun observeViewModel() {
@@ -89,11 +91,9 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         homeAdapter.submitList(items)
     }
 
-    // UI Action triggers the call
     override fun openBook(model: BookModel) {
         vm.onBookClicked(model)
 
-        // Open Book from URL
         if (AppAdManager.isAdReady()) {
             AppAdManager.showAd(requireActivity()) {
                 startActivity(Intent(Intent.ACTION_VIEW).apply {
@@ -103,8 +103,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         } else {
             Toast.makeText(context, "Ad not ready opening content.", Toast.LENGTH_LONG).show()
         }
-
-
     }
 
     override fun onListHeadingClicked(

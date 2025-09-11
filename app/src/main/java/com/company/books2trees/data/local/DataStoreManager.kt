@@ -21,7 +21,6 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
-    // ToDo DataStoreManager shouldn't depend on BookRepositoryImpl
     fun getSearchFilter(): Flow<String?> {
         return context.searchDataStore.data.map { preference ->
             preference[SearchPreferenceKeys.GENRE]

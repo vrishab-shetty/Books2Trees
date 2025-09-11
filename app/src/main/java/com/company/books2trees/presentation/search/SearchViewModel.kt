@@ -9,14 +9,18 @@ import com.company.books2trees.domain.use_case.GetSearchFilterUseCase
 import com.company.books2trees.domain.use_case.SearchBooksUseCase
 import com.company.books2trees.domain.use_case.SetSearchFilterUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -29,46 +33,47 @@ class SearchViewModel(
     private val setSearchFilter: SetSearchFilterUseCase
 ) : ViewModel() {
 
-    private val _result = MutableStateFlow<ResultViewState>(ResultViewState.Loading)
-    val result: StateFlow<ResultViewState> get() = _result.asStateFlow()
+    private val _navigationEvent = MutableSharedFlow<String>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
 
-    private val _selectedFilter = MutableStateFlow("All")
+    private val _selectedFilter = MutableStateFlow("")
     val selectedFilter: StateFlow<String> get() = _selectedFilter.asStateFlow()
 
-    // The list is now provided by a use case
     val genreList: List<String> = getGenres()
 
-    // A state flow to hold the current search query
     private val query = MutableStateFlow("")
 
+    val result: StateFlow<ResultViewState> = query
+        .combine(selectedFilter) { query, filter -> Pair(query, filter) }
+        .flatMapLatest { (query, filter) ->
+            if (query.isBlank()) {
+                flow<ResultViewState> {
+                    emit(ResultViewState.Content(emptyList()))
+                }
+            } else {
+                flow {
+                    emit(ResultViewState.Loading)
+                    try {
+                        val books = searchBooks(query, filter)
+                        emit(ResultViewState.Content(books))
+                    } catch (e: Exception) {
+                        emit(ResultViewState.Error(e))
+                    }
+                }
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ResultViewState.Loading // This will now compile correctly
+        )
+
     init {
-        // Load the last used filter from DataStore
         viewModelScope.launch {
             getSearchFilter().onEach { savedFilter ->
                 _selectedFilter.value = savedFilter
             }.launchIn(this)
         }
-
-
-        query.combine(selectedFilter) { query, filter ->
-            Pair(query, filter)
-        }.flatMapLatest { (query, filter) ->
-            flow {
-                if (query.isBlank()) {
-                    emit(ResultViewState.Loading)
-                    return@flow
-                }
-                emit(ResultViewState.Loading)
-                try {
-                    val books = searchBooks(query, filter)
-                    emit(ResultViewState.Content(books))
-                } catch (e: Exception) {
-                    emit(ResultViewState.Error(e))
-                }
-            }
-        }
-            .onEach { state -> _result.value = state }
-            .launchIn(viewModelScope)
     }
 
     fun onQueryChanged(newQuery: String) {
@@ -78,6 +83,9 @@ class SearchViewModel(
     fun onBookClicked(model: BookModel) {
         viewModelScope.launch {
             addRecentBook(model)
+            model.url?.let {
+                _navigationEvent.emit(it)
+            }
         }
     }
 
