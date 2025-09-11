@@ -41,6 +41,17 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
     }
 
     private fun setupPageList() {
+        createHomeAdapter()
+        useBinding { binding ->
+            binding.pageList.apply {
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                adapter = homeAdapter
+                setHasFixedSize(true)
+            }
+        }
+    }
+
+    private fun createHomeAdapter() {
         homeAdapter = HomeAdapter(
             layoutInflater, viewPool = viewPool,
             listener = object : HomeAdapter.Listener {
@@ -65,13 +76,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 }
             }
         )
-        useBinding { binding ->
-            binding.pageList.apply {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                adapter = homeAdapter
-                setHasFixedSize(true)
-            }
-        }
     }
 
     private fun observeViewModel() {
