@@ -39,7 +39,8 @@ class SearchViewModel(
     private val _selectedFilter = MutableStateFlow("")
     val selectedFilter: StateFlow<String> get() = _selectedFilter.asStateFlow()
 
-    val genreList: List<String> = getGenres()
+    private val _genreList = MutableStateFlow<List<String>>(emptyList())
+    val genreList: StateFlow<List<String>> = _genreList.asStateFlow()
 
     private val query = MutableStateFlow("")
 
@@ -70,6 +71,8 @@ class SearchViewModel(
 
     init {
         viewModelScope.launch {
+            _genreList.value = getGenres()
+
             getSearchFilter().onEach { savedFilter ->
                 _selectedFilter.value = savedFilter
             }.launchIn(this)
@@ -90,7 +93,7 @@ class SearchViewModel(
     }
 
     fun onFilterItemClicked(position: Int) {
-        _selectedFilter.value = genreList[position]
+        _selectedFilter.value = _genreList.value[position]
     }
 
     fun applyFilter() {
