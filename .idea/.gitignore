@@ -11,3 +11,4 @@ deploymentTargetSelector.xml
 
 # Experimental rendering settings
 render.experimental.xml
+/studiobot.xml

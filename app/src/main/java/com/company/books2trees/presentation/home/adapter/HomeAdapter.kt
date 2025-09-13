@@ -1,0 +1,179 @@
+package com.company.books2trees.presentation.home.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.company.books2trees.R
+import com.company.books2trees.databinding.ItemHomePageListBinding
+import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.presentation.common.adapter.BookListAdapter
+import com.company.books2trees.presentation.home.callbacks.OnBookClicked
+import com.company.books2trees.presentation.home.callbacks.OnBookLongPressed
+import com.company.books2trees.presentation.utils.UIHelper.popupMenuNoIcons
+
+class HomeAdapter(
+    private val layoutInflater: LayoutInflater,
+    private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool(),
+    private val listener: Listener
+) : ListAdapter<HomePageListItem, RecyclerView.ViewHolder>(DiffCallback()) {
+
+    interface Listener : OnBookClicked {
+        fun onListHeadingClicked(title: String, books: List<BookModel>)
+        fun onBookAddToFavorites(book: BookModel)
+        fun onBookRemove(book: BookModel)
+    }
+
+    companion object {
+        private const val VIEW_TYPE_RECENT_HEADER = 1
+        private const val VIEW_TYPE_BOOK_LIST = 2
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is HomePageListItem.BookList -> VIEW_TYPE_BOOK_LIST
+            is HomePageListItem.RecentBooks -> VIEW_TYPE_RECENT_HEADER
+        }
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): RecyclerView.ViewHolder {
+
+        val binding = ItemHomePageListBinding.inflate(layoutInflater, parent, false)
+
+        return when (viewType) {
+            VIEW_TYPE_RECENT_HEADER -> HeaderViewHolder(binding)
+            VIEW_TYPE_BOOK_LIST -> ParentViewHolder(binding)
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ) {
+        when (val item = getItem(position)) {
+            is HomePageListItem.BookList -> (holder as ParentViewHolder).bind(item)
+            is HomePageListItem.RecentBooks -> (holder as HeaderViewHolder).bind(item)
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: List<Any?>
+    ) {
+        if(payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+            return
+        }
+
+        val lastPayLoad = payloads.last()
+        if(holder is HeaderViewHolder && lastPayLoad is HomePageListPayload.RecentBooksPayload) {
+            holder.updateBookList(lastPayLoad.books)
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
+    inner class HeaderViewHolder(private val binding: ItemHomePageListBinding) : RecyclerView.ViewHolder(
+        binding.root
+    ), OnBookLongPressed {
+        private val bookListAdapter =
+            BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
+
+
+        init {
+            binding.bookList.adapter = bookListAdapter
+            binding.bookList.setRecycledViewPool(viewPool)
+        }
+
+        fun bind(listItem: HomePageListItem.RecentBooks) {
+            binding.books.text = binding.root.context.getString(R.string.recent_books_caption)
+            updateBookList(listItem.books)
+        }
+
+        override fun showOptionsMenu(model: BookModel, itemView: View) {
+            val options = listOf(R.string.add_to_favorite, R.string.remove)
+            itemView.popupMenuNoIcons(options.mapIndexed { index, s -> Pair(index, s) }) {
+                when (itemId) {
+                    0 -> listener.onBookAddToFavorites(model)
+                    1 -> listener.onBookRemove(model)
+                }
+            }
+        }
+
+        fun updateBookList(books: List<BookModel>) {
+            bookListAdapter.submitList(books)
+            binding.books.setOnClickListener {
+                listener.onListHeadingClicked(binding.books.text.toString(), books)
+            }
+        }
+    }
+
+    inner class ParentViewHolder(private val binding: ItemHomePageListBinding) : RecyclerView.ViewHolder(
+        binding.root
+    ), OnBookLongPressed {
+        private val bookListAdapter =
+            BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
+
+        init {
+            binding.bookList.adapter = bookListAdapter
+            binding.bookList.setRecycledViewPool(viewPool)
+        }
+
+        fun bind(item: HomePageListItem.BookList) {
+            val title = binding.root.context.getString(item.list.name)
+            binding.books.text = title
+            bookListAdapter.submitList(item.list.list)
+            binding.books.setOnClickListener {
+                listener.onListHeadingClicked(title, item.list.list)
+            }
+        }
+
+        override fun showOptionsMenu(model: BookModel, itemView: View) {
+            val options = listOf(R.string.add_to_favorite)
+            itemView.popupMenuNoIcons(options.mapIndexed { index, value -> Pair(index, value) }) {
+                when (itemId) {
+                    0 -> listener.onBookAddToFavorites(model)
+                }
+            }
+        }
+    }
+
+    sealed class HomePageListPayload {
+        data class RecentBooksPayload(val books: List<BookModel>) : HomePageListPayload()
+    }
+
+    class DiffCallback : DiffUtil.ItemCallback<HomePageListItem>() {
+        override fun areItemsTheSame(
+            oldItem: HomePageListItem,
+            newItem: HomePageListItem
+        ) = oldItem.id == newItem.id
+
+        override fun areContentsTheSame(
+            oldItem: HomePageListItem,
+            newItem: HomePageListItem
+        ) = oldItem == newItem
+
+        override fun getChangePayload(
+            oldItem: HomePageListItem,
+            newItem: HomePageListItem
+        ): Any? {
+
+            if(oldItem is HomePageListItem.RecentBooks && newItem is HomePageListItem.RecentBooks) {
+                if(oldItem.books != newItem.books) {
+                    return HomePageListPayload.RecentBooksPayload(newItem.books)
+                }
+            }
+
+            return null
+        }
+    }
+
+
+}

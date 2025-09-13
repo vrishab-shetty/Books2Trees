@@ -6,7 +6,7 @@
     <data>
         <variable
             name="model"
-            type="com.company.books2trees.ui.models.BookModel" />
+            type="com.company.books2trees.domain.model.BookModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

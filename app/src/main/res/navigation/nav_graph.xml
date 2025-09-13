@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.company.books2trees.ui.home.HomeFragment"
+        android:name="com.company.books2trees.presentation.home.HomeFragment"
         android:label="Home"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -16,7 +16,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.company.books2trees.ui.profile.ProfileFragment"
+        android:name="com.company.books2trees.presentation.profile.ProfileFragment"
         android:label="Profile"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.company.books2trees.ui.settings.SettingsFragment"
+        android:name="com.company.books2trees.presentation.settings.SettingsFragment"
         android:label="Settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -68,7 +68,7 @@
 
     <fragment
         android:id="@+id/infoFragment"
-        android:name="com.company.books2trees.ui.info.InfoFragment"
+        android:name="com.company.books2trees.presentation.info.InfoFragment"
         android:label="Info"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -84,7 +84,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.company.books2trees.ui.search.SearchFragment"
+        android:name="com.company.books2trees.presentation.search.SearchFragment"
         android:label="Search"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -94,7 +94,7 @@
 
     <fragment
         android:id="@+id/settingGeneral"
-        android:name="com.company.books2trees.ui.settings.SettingsGeneral"
+        android:name="com.company.books2trees.presentation.settings.SettingsGeneral"
         android:label="General"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -102,7 +102,7 @@
         app:popExitAnim="@anim/exit_anim" />
     <fragment
         android:id="@+id/settingsAcc"
-        android:name="com.company.books2trees.ui.settings.SettingsAcc"
+        android:name="com.company.books2trees.presentation.settings.SettingsAcc"
         android:label="SettingsAcc"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -110,7 +110,7 @@
         app:popExitAnim="@anim/exit_anim" />
     <fragment
         android:id="@+id/settingsHelpSupport"
-        android:name="com.company.books2trees.ui.settings.SettingsHelpSupport"
+        android:name="com.company.books2trees.presentation.settings.SettingsHelpSupport"
         android:label="SettingsHelpSupport"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -118,7 +118,7 @@
         app:popExitAnim="@anim/exit_anim" />
     <fragment
         android:id="@+id/settingsUpdates"
-        android:name="com.company.books2trees.ui.settings.SettingsUpdates"
+        android:name="com.company.books2trees.presentation.settings.SettingsUpdates"
         android:label="SettingsUpdates"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
@@ -126,7 +126,7 @@
         app:popExitAnim="@anim/exit_anim" />
     <activity
         android:id="@+id/viewPdfActivity"
-        android:name="com.company.books2trees.ui.info.ViewPdfActivity"
+        android:name="com.company.books2trees.presentation.info.ViewPdfActivity"
         android:label="ViewPdfActivity" />
 
 </navigation>

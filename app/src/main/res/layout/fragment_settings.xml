@@ -6,7 +6,7 @@
     <data>
         <variable
             name="data"
-            type="com.company.books2trees.presentation.sign_in.UserData" />
+            type="com.company.books2trees.data.auth.UserData" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

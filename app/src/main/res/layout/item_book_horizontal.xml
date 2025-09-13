@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.company.books2trees.domain.model.BookModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="120dp"
+            android:layout_height="180dp"
+            app:cardCornerRadius="@dimen/rounded_image_radius"
+            app:cardElevation="4dp">
+
+            <ImageView
+                android:id="@+id/book_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/book_caption"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{model.cover}" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/book_name"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@{model.name}"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Book Title Here" />
+
+        <TextView
+            android:id="@+id/book_extras"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@{model.subtext}"
+            android:textSize="12sp"
+            tools:text="Author Name" />
+    </LinearLayout>
+</layout>
