@@ -62,23 +62,39 @@ class HomeAdapter(
         }
     }
 
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: List<Any?>
+    ) {
+        if(payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+            return
+        }
+
+        val lastPayLoad = payloads.last()
+        if(holder is HeaderViewHolder && lastPayLoad is HomePageListPayload.RecentBooksPayload) {
+            holder.updateBookList(lastPayLoad.books)
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
     inner class HeaderViewHolder(private val binding: ItemHomePageListBinding) : RecyclerView.ViewHolder(
         binding.root
     ), OnBookLongPressed {
         private val bookListAdapter =
             BookListAdapter(layoutInflater, listener, this, R.layout.item_book_horizontal)
 
+
         init {
             binding.bookList.adapter = bookListAdapter
             binding.bookList.setRecycledViewPool(viewPool)
         }
 
-        fun bind(item: HomePageListItem.RecentBooks) {
+        fun bind(listItem: HomePageListItem.RecentBooks) {
             binding.books.text = binding.root.context.getString(R.string.recent_books_caption)
-            bookListAdapter.submitList(item.books)
-            binding.books.setOnClickListener {
-                listener.onListHeadingClicked(binding.books.text.toString(), item.books)
-            }
+            updateBookList(listItem.books)
         }
 
         override fun showOptionsMenu(model: BookModel, itemView: View) {
@@ -88,6 +104,13 @@ class HomeAdapter(
                     0 -> listener.onBookAddToFavorites(model)
                     1 -> listener.onBookRemove(model)
                 }
+            }
+        }
+
+        fun updateBookList(books: List<BookModel>) {
+            bookListAdapter.submitList(books)
+            binding.books.setOnClickListener {
+                listener.onListHeadingClicked(binding.books.text.toString(), books)
             }
         }
     }
@@ -122,6 +145,10 @@ class HomeAdapter(
         }
     }
 
+    sealed class HomePageListPayload {
+        data class RecentBooksPayload(val books: List<BookModel>) : HomePageListPayload()
+    }
+
     class DiffCallback : DiffUtil.ItemCallback<HomePageListItem>() {
         override fun areItemsTheSame(
             oldItem: HomePageListItem,
@@ -132,6 +159,20 @@ class HomeAdapter(
             oldItem: HomePageListItem,
             newItem: HomePageListItem
         ) = oldItem == newItem
+
+        override fun getChangePayload(
+            oldItem: HomePageListItem,
+            newItem: HomePageListItem
+        ): Any? {
+
+            if(oldItem is HomePageListItem.RecentBooks && newItem is HomePageListItem.RecentBooks) {
+                if(oldItem.books != newItem.books) {
+                    return HomePageListPayload.RecentBooksPayload(newItem.books)
+                }
+            }
+
+            return null
+        }
     }
 
 
