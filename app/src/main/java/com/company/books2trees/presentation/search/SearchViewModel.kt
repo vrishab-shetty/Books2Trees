@@ -92,8 +92,8 @@ class SearchViewModel(
         }
     }
 
-    fun onFilterItemClicked(position: Int) {
-        _selectedFilter.value = _genreList.value[position]
+    fun onFilterItemClicked(filter: String) {
+        _selectedFilter.value = filter
     }
 
     fun applyFilter() {

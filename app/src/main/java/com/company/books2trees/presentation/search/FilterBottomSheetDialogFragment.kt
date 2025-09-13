@@ -67,7 +67,8 @@ class FilterBottomSheetDialogFragment : ViewBindingBottomSheetDialogFragment<Sel
                 adapter = genreAdapter
                 choiceMode = ListView.CHOICE_MODE_SINGLE
                 setOnItemClickListener { _, _, position, _ ->
-                    vm.onFilterItemClicked(position)
+                    val selectedGenre = genreAdapter.getItem(position)
+                    vm.onFilterItemClicked(selectedGenre!!)
                 }
             }
         }
