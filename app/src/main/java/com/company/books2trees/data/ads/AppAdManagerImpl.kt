@@ -1,39 +1,32 @@
-package com.company.books2trees.presentation.common
+package com.company.books2trees.data.ads
 
 import android.app.Activity
-import android.content.Context
+import android.app.Application
+import com.company.books2trees.domain.ads.AdManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
-object AppAdManager {
+class AppAdManagerImpl(private val application: Application) : AdManager {
 
     private var rewardedAd: RewardedAd? = null
-    private var isMobileAdsInitialized = false
+    private val AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
 
-
-    private const val AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
-
-    fun initialize(context: Context) {
-        if (isMobileAdsInitialized) return
-        MobileAds.initialize(context) {
-            isMobileAdsInitialized = true
-            loadAd(context)
-        }
+    init {
+        loadAd()
     }
 
-    fun isAdReady(): Boolean = rewardedAd != null
+    override fun isAdReady(): Boolean = rewardedAd != null
 
-    fun loadAd(context: Context) {
+    private fun loadAd() {
         if (rewardedAd != null) return
 
         val adRequest = AdRequest.Builder().build()
 
         RewardedAd.load(
-            context,
+            application,
             AD_UNIT_ID,
             adRequest,
             object : RewardedAdLoadCallback() {
@@ -48,29 +41,25 @@ object AppAdManager {
         )
     }
 
-    fun showAd(activity: Activity, onRewardGranted: () -> Unit) {
+    override fun showAd(activity: Activity, onAdFlowFinished: (wasRewarded: Boolean) -> Unit) {
         if (rewardedAd == null) {
-            loadAd(activity)
+            onAdFlowFinished(false)
+            loadAd()
             return
         }
 
         var wasRewardGranted = false
-
         rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
+                onAdFlowFinished(wasRewardGranted)
                 rewardedAd = null
-
-                if (wasRewardGranted) {
-                    onRewardGranted()
-                }
-
-                loadAd(activity)
+                loadAd()
             }
         }
 
-        rewardedAd?.show(activity) {
+        rewardedAd?.show(activity) { rewardItem ->
             wasRewardGranted = true
-        }
+        } ?: onAdFlowFinished(false)
     }
 
 }
