@@ -83,7 +83,7 @@ class BookRepositoryImpl(
         dataStoreManager.setSearchFilter(filter)
     }
 
-    override fun getGenres(): List<String> {
+    override suspend fun getGenres(): List<String> {
         return listOf(
             "All", "Art", "Biography", "Business", "Children", "Comics",
             "Contemporary", "Cookbooks", "Crime", "Fantasy", "Fiction", "History",
