@@ -6,7 +6,7 @@ import com.company.books2trees.domain.repository.BookRepository
 class SearchBooksUseCase(
     private val bookRepository: BookRepository
 ) {
-    suspend operator fun invoke(query: String, filter: String?): List<BookModel> {
+    suspend operator fun invoke(query: String, filter: String): List<BookModel> {
         // Business rule: Don't hit the network or cache if the query is empty.
         if (query.isBlank()) {
             return emptyList()
