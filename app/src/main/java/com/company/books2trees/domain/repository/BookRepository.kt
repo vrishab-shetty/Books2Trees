@@ -7,7 +7,7 @@ interface BookRepository {
 
     suspend fun getTrendingBooks(): List<BookModel>
     suspend fun getBooksBySubject(subject: String, limit: Int): List<BookModel>
-    suspend fun searchBooks(query: String, filter: String?): List<BookModel>
+    suspend fun searchBooks(query: String, filter: String): List<BookModel>
     suspend fun addRecentBook(model: BookModel)
     suspend fun removeRecentBook(id: String)
     fun getRecentBooksFlow(): Flow<List<BookModel>>

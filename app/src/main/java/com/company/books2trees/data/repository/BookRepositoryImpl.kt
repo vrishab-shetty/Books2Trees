@@ -40,12 +40,14 @@ class BookRepositoryImpl(
         subjectResultDto?.works?.map { it.toBookModel() } ?: emptyList()
     }
 
-    override suspend fun searchBooks(query: String, filter: String?): List<BookModel> =
+    override suspend fun searchBooks(query: String, filter: String): List<BookModel> =
         withContext(Dispatchers.IO) {
-            val cacheKey = Pair(query, filter ?: DEFAULT_GENRE)
+            val cacheKey = Pair(query, filter)
 
             searchCache.get(cacheKey) ?: run {
-                val searchResultDto = remoteDataSource.searchBook(query, filter)
+                val searchResultDto = remoteDataSource.searchBook(
+                    query, if (filter == DEFAULT_GENRE) null else filter
+                )
                 val displayModels =
                     searchResultDto?.searchResults?.map { it.toBookModel() } ?: emptyList()
 

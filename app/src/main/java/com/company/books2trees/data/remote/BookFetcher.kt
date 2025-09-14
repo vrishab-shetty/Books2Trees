@@ -4,7 +4,6 @@ import com.company.books2trees.data.remote.dto.BookDetailDto
 import com.company.books2trees.data.remote.dto.SearchResultDto
 import com.company.books2trees.data.remote.dto.SubjectResultDto
 import com.company.books2trees.data.remote.dto.TrendingBooksDto
-import com.company.books2trees.data.repository.BookRepositoryImpl
 import com.google.gson.Gson
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -39,7 +38,7 @@ object BookFetcher {
             ?.newBuilder()
             ?: return null // Return null if the base URL is invalid
 
-        if (filter != null && filter != BookRepositoryImpl.DEFAULT_GENRE) {
+        if (filter != null) {
             urlBuilder.addQueryParameter("subject", filter.lowercase(Locale.getDefault()))
         }
 
