@@ -1,4 +1,4 @@
-package com.company.books2trees.data.auth
+package com.company.books2trees.domain.model
 
 data class UserData(
     val userId: String,
