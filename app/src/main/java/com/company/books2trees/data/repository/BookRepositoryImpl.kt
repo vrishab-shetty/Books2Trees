@@ -21,9 +21,8 @@ class BookRepositoryImpl(
     private val dataStoreManager: DataStoreManager
 ) : BookRepository {
 
-    companion object {
-        const val DEFAULT_GENRE = "All"
-    }
+
+    private val DEFAULT_GENRE = "All"
 
     private val searchCache = LruCache<Pair<String, String>, List<BookModel>>(5)
 
