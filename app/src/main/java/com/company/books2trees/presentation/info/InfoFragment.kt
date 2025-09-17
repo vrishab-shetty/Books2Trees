@@ -3,7 +3,9 @@ package com.company.books2trees.presentation.info
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.R
@@ -12,6 +14,7 @@ import com.company.books2trees.domain.model.PdfModel
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.info.adapter.PdfListAdapter
 import com.company.books2trees.presentation.utils.UIHelper.navigateTo
+import kotlinx.coroutines.launch
 
 class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBinding::inflate) {
 
@@ -33,8 +36,30 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
     }
 
     private fun observeViewState() {
-        vm.pdfList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.pdfList.collect { viewState ->
+                setupViewVisibility(viewState)
+
+                when (viewState) {
+                    is PdfListViewState.Loading -> {
+
+                    }
+                    is PdfListViewState.Content -> {
+                        adapter.submitList(viewState.list)
+                    }
+                    is PdfListViewState.Error -> {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupViewVisibility(viewState: PdfListViewState) {
+        useBinding { binding ->
+            binding.progressBar.isVisible = viewState is PdfListViewState.Loading
+            binding.textView.isVisible = viewState is PdfListViewState.Content && viewState.list.isEmpty()
+            binding.pdfList.isVisible = viewState is PdfListViewState.Content
         }
     }
 
