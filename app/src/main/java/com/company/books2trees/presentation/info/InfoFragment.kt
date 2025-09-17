@@ -27,15 +27,18 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = PdfListAdapter(
-            layoutInflater,
-            onItemClick = {
-                openPdf(it)
-            },
-            onOptionsCLick = {
-                deletePdf(it)
-            }
-        )
+        setupAdapter()
+        setupPdfList()
+        observeViewState()
+    }
+
+    private fun observeViewState() {
+        vm.pdfList.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
+    }
+
+    private fun setupPdfList() {
         useBinding { binding ->
             binding.pdfList.apply {
                 adapter = this@InfoFragment.adapter
@@ -59,10 +62,18 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
             }
 
         }
+    }
 
-        vm.pdfList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
+    private fun setupAdapter() {
+        adapter = PdfListAdapter(
+            layoutInflater,
+            onItemClick = {
+                openPdf(it)
+            },
+            onOptionsCLick = {
+                deletePdf(it)
+            }
+        )
     }
 
     private fun deletePdf(model: PdfModel) {
