@@ -1,9 +1,8 @@
 package com.company.books2trees.data.local
 
 import android.net.Uri
-import androidx.core.net.toUri
-import com.company.books2trees.domain.model.PdfModel
 import com.company.books2trees.data.utils.FileUtil
+import com.company.books2trees.domain.model.PdfModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +12,7 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 
 // ToDo: Fix Thumbnail issue
-class PdfLocalDataSource(private val fileUtil: FileUtil, /*private val pdfPageProvider: PdfPageProvider*/) {
+class PdfLocalDataSource(private val fileUtil: FileUtil /*private val pdfPageProvider: PdfPageProvider*/) {
     private val DIRECTORY_THUMBNAILS = "Thumbnails"
 
     private val pdfsFlow = MutableStateFlow<Map<String, PdfModel>>(emptyMap())

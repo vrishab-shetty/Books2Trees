@@ -3,8 +3,8 @@ package com.company.books2trees.presentation.info
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.domain.model.PdfModel
 import com.company.books2trees.data.repository.PdfRepository
+import com.company.books2trees.domain.model.PdfModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ sealed class PdfListViewState {
 }
 
 // ToDo: Should Depend on UseCases
-class InfoViewModel(private val pdfRepository: PdfRepository): ViewModel() {
+class InfoViewModel(private val pdfRepository: PdfRepository) : ViewModel() {
 
     private val _pdfList = MutableStateFlow<PdfListViewState>(PdfListViewState.Loading)
     val pdfList: StateFlow<PdfListViewState> = _pdfList.asStateFlow()

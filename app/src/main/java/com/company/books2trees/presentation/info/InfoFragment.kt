@@ -63,28 +63,29 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
     private fun setupViewVisibility(viewState: PdfListViewState) {
         useBinding { binding ->
             binding.progressBar.isVisible = viewState is PdfListViewState.Loading
-            binding.textView.isVisible = viewState is PdfListViewState.Content && viewState.list.isEmpty() || viewState is PdfListViewState.Error
+            binding.textView.isVisible =
+                viewState is PdfListViewState.Content && viewState.list.isEmpty() || viewState is PdfListViewState.Error
             binding.pdfList.isVisible = viewState is PdfListViewState.Content
         }
     }
 
     private fun setupPdfList() = useBinding { binding ->
-            binding.pdfList.apply {
-                adapter = this@InfoFragment.adapter
-                layoutManager =
-                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        val fab = binding.addPdf
-                        if (dy > 0) {
-                            fab.shrink()
-                        } else if (dy < -5) {
-                            fab.extend()
-                        }
-                        super.onScrolled(recyclerView, dx, dy)
+        binding.pdfList.apply {
+            adapter = this@InfoFragment.adapter
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val fab = binding.addPdf
+                    if (dy > 0) {
+                        fab.shrink()
+                    } else if (dy < -5) {
+                        fab.extend()
                     }
-                })
-            }
+                    super.onScrolled(recyclerView, dx, dy)
+                }
+            })
+        }
 
 
     }

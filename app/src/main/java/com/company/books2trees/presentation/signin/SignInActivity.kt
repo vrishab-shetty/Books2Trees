@@ -58,6 +58,7 @@ class SignInActivity : AppCompatActivity() {
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
+
                 is SignInState.Error -> {
                     Toast.makeText(
                         this,

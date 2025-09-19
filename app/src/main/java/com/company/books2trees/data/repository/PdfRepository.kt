@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 
 class PdfRepository(private val pdfLocalDataSource: PdfLocalDataSource) {
 
-    fun getItems() = pdfLocalDataSource.getItems();
+    fun getItems() = pdfLocalDataSource.getItems()
 
     suspend fun addPdf(uri: Uri) = withContext(Dispatchers.IO) {
         pdfLocalDataSource.addPdf(uri)
