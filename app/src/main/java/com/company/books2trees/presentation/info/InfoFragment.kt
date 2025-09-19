@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,11 +14,11 @@ import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.info.adapter.PdfListAdapter
 import com.company.books2trees.presentation.utils.UIHelper.navigateTo
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBinding::inflate) {
-
     private lateinit var adapter: PdfListAdapter
-    private val vm: InfoViewModel by viewModels()
+    private val vm: InfoViewModel by viewModel()
     private val openDoc =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) {
             it?.let {
@@ -32,6 +31,7 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
 
         setupAdapter()
         setupPdfList()
+        setUpFao()
         observeViewState()
     }
 
@@ -41,14 +41,19 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
                 setupViewVisibility(viewState)
 
                 when (viewState) {
-                    is PdfListViewState.Loading -> {
+                    is PdfListViewState.Loading -> {}
 
-                    }
-                    is PdfListViewState.Content -> {
+                    is PdfListViewState.Content -> useBinding { binding ->
+                        val list = viewState.list
+
+                        if (list.isEmpty()) {
+                            binding.textView.text = getString(R.string.no_items)
+                        }
                         adapter.submitList(viewState.list)
                     }
-                    is PdfListViewState.Error -> {
 
+                    is PdfListViewState.Error -> useBinding { binding ->
+                        binding.textView.text = viewState.errorMessage
                     }
                 }
             }
@@ -58,13 +63,12 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
     private fun setupViewVisibility(viewState: PdfListViewState) {
         useBinding { binding ->
             binding.progressBar.isVisible = viewState is PdfListViewState.Loading
-            binding.textView.isVisible = viewState is PdfListViewState.Content && viewState.list.isEmpty()
+            binding.textView.isVisible = viewState is PdfListViewState.Content && viewState.list.isEmpty() || viewState is PdfListViewState.Error
             binding.pdfList.isVisible = viewState is PdfListViewState.Content
         }
     }
 
-    private fun setupPdfList() {
-        useBinding { binding ->
+    private fun setupPdfList() = useBinding { binding ->
             binding.pdfList.apply {
                 adapter = this@InfoFragment.adapter
                 layoutManager =
@@ -82,10 +86,12 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
                 })
             }
 
-            binding.addPdf.setOnClickListener {
-                openDoc.launch(arrayOf("application/pdf"))
-            }
 
+    }
+
+    private fun setUpFao() = useBinding { binding ->
+        binding.addPdf.setOnClickListener {
+            openDoc.launch(arrayOf("application/pdf"))
         }
     }
 
@@ -106,7 +112,10 @@ class InfoFragment : ViewBindingFragment<FragmentInfoBinding>(FragmentInfoBindin
     }
 
     private fun openPdf(model: PdfModel) {
-        activity?.navigateTo(R.id.viewPdfActivity, Bundle().apply { putString("id", model.id) })
+        activity?.navigateTo(R.id.viewPdfActivity, Bundle().apply {
+            putString("pdfFileUri", model.uri.toString())
+            putString("pdfName", model.name)
+        })
     }
 
 }

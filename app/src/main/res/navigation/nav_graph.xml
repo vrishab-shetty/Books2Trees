@@ -76,11 +76,14 @@
         app:popExitAnim="@anim/exit_anim"
         tools:layout="@layout/fragment_info" >
         <argument
-            android:name="id"
+            android:name="pdfFileUri"
             app:argType="string" />
         <action
             android:id="@+id/action_infoFragment_to_viewPdfActivity"
             app:destination="@id/viewPdfActivity" />
+        <argument
+            android:name="pdfName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"

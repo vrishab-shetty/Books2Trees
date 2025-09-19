@@ -4,20 +4,24 @@ import com.company.books2trees.domain.repository.AuthRepository
 import com.company.books2trees.domain.repository.BookRepository
 import com.company.books2trees.domain.repository.LibraryRepository
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
+import com.company.books2trees.domain.use_case.ClosePdfUseCase
 import com.company.books2trees.domain.use_case.DeleteLibraryBookUseCase
 import com.company.books2trees.domain.use_case.GetGenresUseCase
 import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
+import com.company.books2trees.domain.use_case.GetPdfPageBitmapUseCase
 import com.company.books2trees.domain.use_case.GetProfileContentUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.GetSearchFilterUseCase
 import com.company.books2trees.domain.use_case.GetSignedInUserUseCase
 import com.company.books2trees.domain.use_case.InsertBookToLibraryUseCase
+import com.company.books2trees.domain.use_case.OpenPdfUseCase
 import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
 import com.company.books2trees.domain.use_case.SearchBooksUseCase
 import com.company.books2trees.domain.use_case.SetSearchFilterUseCase
 import com.company.books2trees.domain.use_case.SignInWithGoogleTokenUseCase
 import com.company.books2trees.domain.use_case.SignOutUseCase
 import com.company.books2trees.domain.use_case.UpdateLibraryItemUseCase
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -37,5 +41,7 @@ val domainModule = module {
     factory { GetSignedInUserUseCase(get<AuthRepository>()) }
     factory { SignInWithGoogleTokenUseCase(get<AuthRepository>()) }
     factory { SignOutUseCase(get<AuthRepository>()) }
-
+    factory { ClosePdfUseCase() }
+    factory { GetPdfPageBitmapUseCase() }
+    factory { OpenPdfUseCase(androidContext()) }
 }

@@ -13,6 +13,7 @@ data class PdfModel(
 ) {
 
 
+    // ToDo: Move it to presentation layer
     object PdfModelDiffCallback : DiffUtil.ItemCallback<PdfModel>() {
         override fun areItemsTheSame(oldItem: PdfModel, newItem: PdfModel) =
             oldItem === newItem

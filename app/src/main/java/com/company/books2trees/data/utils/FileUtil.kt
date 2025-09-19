@@ -2,8 +2,6 @@ package com.company.books2trees.data.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -15,26 +13,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.math.roundToInt
 
-object FileUtils {
-
-    const val DIRECTORY_THUMBNAILS = "Thumbnails"
-
-    fun getScaledBitmap(actualWidth: Int, actualHeight: Int, screenWidth: Int): Bitmap {
-
-        val bitmap = Bitmap.createBitmap(
-            screenWidth,
-            (screenWidth.toFloat() / actualWidth * actualHeight).toInt(),
-            Bitmap.Config.ARGB_8888
-        )
-
-        val canvas = Canvas(bitmap)
-        canvas.drawColor(Color.WHITE)
-        canvas.drawBitmap(bitmap, 0f, 0f, null)
-
-        return bitmap
-
-    }
-
+class FileUtil(private val context: Context) {
 
     fun isGoogleDrive(uri: Uri): Boolean {
         return uri.authority.equals("com.google.android.apps.docs.storage", ignoreCase = true)
@@ -55,7 +34,7 @@ object FileUtils {
 
 
     fun getDataColumn(
-        context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String?>?
+        uri: Uri?, selection: String?, selectionArgs: Array<String?>?
     ): String? {
 
         val column = MediaStore.Images.Media.DATA
@@ -74,7 +53,6 @@ object FileUtils {
     }
 
     private fun makeEmptyFileIntoExternalStorageWithTitle(
-        context: Context,
         title: String,
         directory: String
     ): File {
@@ -89,7 +67,7 @@ object FileUtils {
 
 
     @Throws(IOException::class)
-    fun getFileName(context: Context, uri: Uri): String? {
+    fun getFileName(uri: Uri): String? {
 
         var name: String? = null
 
@@ -104,7 +82,7 @@ object FileUtils {
     }
 
     @Throws(IOException::class)
-    fun getFileSize(context: Context, uri: Uri): String? {
+    fun getFileSize(uri: Uri): String? {
         var size: String? = null
 
         context.contentResolver.query(uri, null, null, null, null, null)?.use { cursor ->
@@ -131,16 +109,25 @@ object FileUtils {
     }
 
     @Throws(SecurityException::class, IOException::class)
-    fun deleteFileWithUri(context: Context, uri: Uri): Boolean {
-        return uri.toFile().delete()
+    fun deleteFile(uri: Uri): Boolean {
+        return if ("file" == uri.scheme) {
+            uri.toFile().delete()
+        } else {
+            try {
+                context.contentResolver.delete(uri, null, null) > 0
+            } catch (e: SecurityException) {
+                // Log the error, you don't have permission
+                false
+            }
+        }
     }
 
     @Throws(IOException::class)
     suspend fun saveBitmapFileIntoExternalStorageWithTitle(
-        context: Context, bitmap: Bitmap, title: String, directory: String
+        bitmap: Bitmap, title: String, directory: String
     ): Uri = withContext(Dispatchers.IO) {
         val file = makeEmptyFileIntoExternalStorageWithTitle(
-            context, "$title.png", directory
+            "$title.png", directory
         )
         val fileOutputStream = FileOutputStream(file)
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
