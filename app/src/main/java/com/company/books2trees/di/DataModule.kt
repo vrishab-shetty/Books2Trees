@@ -9,10 +9,11 @@ import com.company.books2trees.data.local.RecentBookDao
 import com.company.books2trees.data.remote.BookFetcher
 import com.company.books2trees.data.repository.BookRepositoryImpl
 import com.company.books2trees.data.repository.LibraryRepositoryImpl
-import com.company.books2trees.data.repository.PdfRepository
+import com.company.books2trees.data.repository.PdfRepositoryImpl
 import com.company.books2trees.data.utils.FileUtil
 import com.company.books2trees.domain.repository.BookRepository
 import com.company.books2trees.domain.repository.LibraryRepository
+import com.company.books2trees.domain.repository.PdfRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -39,5 +40,5 @@ val dataModule = module {
         )
     }
     single<LibraryRepository> { LibraryRepositoryImpl(get<LibraryDao>()) }
-    single { PdfRepository(get<PdfLocalDataSource>()) }
+    single<PdfRepository> { PdfRepositoryImpl(get<PdfLocalDataSource>()) }
 }

@@ -1,13 +1,15 @@
 package com.company.books2trees.di
 
-import com.company.books2trees.data.repository.PdfRepository
 import com.company.books2trees.domain.ads.AdManager
+import com.company.books2trees.domain.use_case.AddPdfUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.ClosePdfUseCase
 import com.company.books2trees.domain.use_case.DeleteLibraryBookUseCase
+import com.company.books2trees.domain.use_case.DeletePdfUseCase
 import com.company.books2trees.domain.use_case.GetGenresUseCase
 import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
 import com.company.books2trees.domain.use_case.GetPdfPageBitmapUseCase
+import com.company.books2trees.domain.use_case.GetPdfsUseCase
 import com.company.books2trees.domain.use_case.GetProfileContentUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.GetSearchFilterUseCase
@@ -84,7 +86,9 @@ val viewModelModule = module {
     // InfoViewModel and its dependencies
     viewModel {
         InfoViewModel(
-            get<PdfRepository>()
+            get<GetPdfsUseCase>(),
+            get<AddPdfUseCase>(),
+            get<DeletePdfUseCase>()
         )
     }
 

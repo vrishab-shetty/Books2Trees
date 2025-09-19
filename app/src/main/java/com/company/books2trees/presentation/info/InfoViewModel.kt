@@ -3,8 +3,10 @@ package com.company.books2trees.presentation.info
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.data.repository.PdfRepository
 import com.company.books2trees.domain.model.PdfModel
+import com.company.books2trees.domain.use_case.AddPdfUseCase
+import com.company.books2trees.domain.use_case.DeletePdfUseCase
+import com.company.books2trees.domain.use_case.GetPdfsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,28 +19,27 @@ sealed class PdfListViewState {
     data class Error(val errorMessage: String) : PdfListViewState()
 }
 
-// ToDo: Should Depend on UseCases
-class InfoViewModel(private val pdfRepository: PdfRepository) : ViewModel() {
+class InfoViewModel(
+    private val getPdfsUseCase: GetPdfsUseCase,
+    private val addPdfUseCase: AddPdfUseCase,
+    private val deletePdfUseCase: DeletePdfUseCase
+) : ViewModel() {
 
     private val _pdfList = MutableStateFlow<PdfListViewState>(PdfListViewState.Loading)
     val pdfList: StateFlow<PdfListViewState> = _pdfList.asStateFlow()
 
     init {
-        observePdfList()
+        loadPdfList()
     }
 
-    private fun observePdfList() {
+    private fun loadPdfList() {
         viewModelScope.launch {
-            // Assuming pdfRepository.getItems() returns a Flow<List<PdfModel>>.
-            // This flow will automatically emit a new list whenever the underlying data changes.
-            pdfRepository.getItems()
+            getPdfsUseCase()
                 .catch { exception ->
-                    // If the flow throws an error, update the state to show it.
                     _pdfList.value =
                         PdfListViewState.Error(exception.message ?: "An unknown error occurred")
                 }
                 .collect { pdfs ->
-                    // When the flow emits a new list, update the UI state.
                     _pdfList.value = PdfListViewState.Content(pdfs)
                 }
         }
@@ -46,14 +47,13 @@ class InfoViewModel(private val pdfRepository: PdfRepository) : ViewModel() {
 
     fun onUriReceived(uri: Uri) {
         viewModelScope.launch {
-            pdfRepository.addPdf(uri)
+            addPdfUseCase(uri)
         }
     }
 
     fun onDeletePdf(model: PdfModel) {
         viewModelScope.launch {
-            pdfRepository.removePdf(model.id)
+            deletePdfUseCase(model)
         }
     }
-
 }
