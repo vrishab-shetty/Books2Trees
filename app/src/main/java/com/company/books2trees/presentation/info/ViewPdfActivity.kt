@@ -1,9 +1,9 @@
 package com.company.books2trees.presentation.info
 
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.navArgs
@@ -59,30 +59,23 @@ class ViewPdfActivity : AppCompatActivity() {
         }
     }
 
-    // ToDo: Include a ProgressUser for visual feedback
     private fun handleState(state: PdfViewerUiState) {
         when (state) {
             is PdfViewerUiState.Loading -> {
-//                binding.progressBar.visibility = View.VISIBLE
-                binding.viewPdf.visibility = View.GONE
-//                binding.errorText.visibility = View.GONE
             }
 
             is PdfViewerUiState.Content -> {
-//                binding.progressBar.visibility = View.GONE
-//                binding.errorText.visibility = View.GONE
-                binding.viewPdf.visibility = View.VISIBLE
                 // Notify the adapter that the item count is now available.
                 viewPdfAdapter.notifyDataSetChanged()
             }
 
             is PdfViewerUiState.Error -> {
-//                binding.progressBar.visibility = View.GONE
-                binding.viewPdf.visibility = View.GONE
-//                binding.errorText.visibility = View.VISIBLE
-//                binding.errorText.text = state.message
+                binding.errorText.text = state.message
             }
         }
+        binding.viewPdf.isVisible = state is PdfViewerUiState.Content
+        binding.progressBar.isVisible = state is PdfViewerUiState.Loading
+        binding.errorText.isVisible = state is PdfViewerUiState.Error
     }
 }
 
