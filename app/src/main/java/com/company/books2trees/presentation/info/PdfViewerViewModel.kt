@@ -28,6 +28,7 @@ class PdfViewerViewModel(
     private val pdfUriString: String
 ) : ViewModel() {
 
+    // Act as long-lived, but stateful session manager for the PDF.
     private var pageProvider: PdfPageProvider? = null
 
     private val _uiState = MutableStateFlow<PdfViewerUiState>(PdfViewerUiState.Loading)

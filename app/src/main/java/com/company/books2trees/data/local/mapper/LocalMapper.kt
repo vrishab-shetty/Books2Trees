@@ -1,8 +1,11 @@
 package com.company.books2trees.data.local.mapper
 
+import androidx.core.net.toUri
 import com.company.books2trees.data.local.model.LibraryItem
+import com.company.books2trees.data.local.model.PdfItem
 import com.company.books2trees.data.local.model.RecentItem
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.PdfModel
 import com.company.books2trees.presentation.profile.LibraryPageItem
 
 fun BookModel.toRecentItemEntity(): RecentItem {
@@ -46,5 +49,15 @@ fun RecentItem.toBookModel(): BookModel {
         cover = this.imgUrl,
         url = this.url,
         subtext = this.extras
+    )
+}
+
+fun toPdfModel(entity: PdfItem): PdfModel {
+    return PdfModel(
+        id = entity.id,
+        name = entity.name,
+        info = entity.info,
+        uri = entity.uriString.toUri(),
+        thumbnail = entity.thumbnailPath
     )
 }

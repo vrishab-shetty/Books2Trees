@@ -5,6 +5,7 @@ import com.company.books2trees.data.local.BookLocalDataSource
 import com.company.books2trees.data.local.DataStoreManager
 import com.company.books2trees.data.local.LibraryDao
 import com.company.books2trees.data.local.PdfLocalDataSource
+import com.company.books2trees.data.local.PdfPageProviderFactory
 import com.company.books2trees.data.local.RecentBookDao
 import com.company.books2trees.data.remote.BookFetcher
 import com.company.books2trees.data.repository.BookRepositoryImpl
@@ -19,17 +20,16 @@ import org.koin.dsl.module
 
 val dataModule = module {
 
-    // Database & DAOs
+    // Low-Level Concerns (Database, DAOs, API services, /...)
     single { BookDatabase[androidContext()] }
     single { get<BookDatabase>().libraryDao() }
     single { get<BookDatabase>().recentDao() }
     single { FileUtil(context = androidContext()) }
-
-    // Data Source
     single { BookFetcher }
     single { DataStoreManager(androidContext()) }
     single { BookLocalDataSource(get<RecentBookDao>()) }
-    single { PdfLocalDataSource(get<FileUtil>()) }
+    single { PdfLocalDataSource() }
+    single { PdfPageProviderFactory(androidContext()) }
 
     // Repositories
     single<BookRepository> {
@@ -40,5 +40,11 @@ val dataModule = module {
         )
     }
     single<LibraryRepository> { LibraryRepositoryImpl(get<LibraryDao>()) }
-    single<PdfRepository> { PdfRepositoryImpl(get<PdfLocalDataSource>()) }
+    single<PdfRepository> {
+        PdfRepositoryImpl(
+            get<FileUtil>(),
+            get<PdfLocalDataSource>(),
+            get<PdfPageProviderFactory>()
+        )
+    }
 }
