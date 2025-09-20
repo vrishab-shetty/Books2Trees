@@ -2,7 +2,7 @@ package com.company.books2trees.domain.use_case
 
 import android.content.Context
 import android.net.Uri
-import com.company.books2trees.data.local.PdfPageProvider
+import com.company.books2trees.data.local.pdf.PdfPageProvider
 import java.io.IOException
 
 /**

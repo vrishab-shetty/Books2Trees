@@ -1,7 +1,7 @@
 package com.company.books2trees.domain.use_case
 
 import android.graphics.Bitmap
-import com.company.books2trees.data.local.PdfPageProvider
+import com.company.books2trees.data.local.pdf.PdfPageProvider
 
 /**
  * Use Case for rendering a single PDF page from an active PdfPageProvider.

@@ -1,6 +1,6 @@
 package com.company.books2trees.domain.use_case
 
-import com.company.books2trees.data.local.PdfPageProvider
+import com.company.books2trees.data.local.pdf.PdfPageProvider
 
 /**
  * Use Case for closing an active PdfPageProvider and releasing its resources.

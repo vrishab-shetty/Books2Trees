@@ -1,6 +1,6 @@
 package com.company.books2trees.domain.repository
 
-import com.company.books2trees.data.local.model.LibraryItem
+import com.company.books2trees.data.local.library.model.LibraryItem
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.Flow

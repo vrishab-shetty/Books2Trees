@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.R
-import com.company.books2trees.data.local.model.LibraryItem
+import com.company.books2trees.data.local.library.model.LibraryItem
 import com.company.books2trees.databinding.LibraryViewpagerBinding
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked

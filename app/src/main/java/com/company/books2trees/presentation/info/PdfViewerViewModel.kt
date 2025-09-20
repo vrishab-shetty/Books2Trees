@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.data.local.PdfPageProvider
+import com.company.books2trees.data.local.pdf.PdfPageProvider
 import com.company.books2trees.domain.use_case.ClosePdfUseCase
 import com.company.books2trees.domain.use_case.GetPdfPageBitmapUseCase
 import com.company.books2trees.domain.use_case.OpenPdfUseCase
