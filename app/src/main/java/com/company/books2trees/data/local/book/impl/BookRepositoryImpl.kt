@@ -5,7 +5,7 @@ import com.company.books2trees.data.local.core.DataStoreManager
 import com.company.books2trees.data.local.recent.BookLocalDataSource
 import com.company.books2trees.data.local.recent.mapper.toBookModel
 import com.company.books2trees.data.local.recent.mapper.toRecentItemEntity
-import com.company.books2trees.data.remote.api.BookFetcher
+import com.company.books2trees.data.remote.api.BookApi
 import com.company.books2trees.data.remote.dto.common.mapper.toBookModel
 import com.company.books2trees.data.remote.dto.search.mapper.toBookModel
 import com.company.books2trees.data.remote.dto.trending.mapper.toBookModel
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 // Single source of Truth
 class BookRepositoryImpl(
-    private val remoteDataSource: BookFetcher,
+    private val remoteDataSource: BookApi,
     private val localDataSource: BookLocalDataSource,
     private val dataStoreManager: DataStoreManager
 ) : BookRepository {
@@ -46,7 +46,7 @@ class BookRepositoryImpl(
             val cacheKey = Pair(query, filter)
 
             searchCache.get(cacheKey) ?: run {
-                val searchResultDto = remoteDataSource.searchBook(
+                val searchResultDto = remoteDataSource.searchBooks(
                     query, if (filter == DEFAULT_GENRE) null else filter
                 )
                 val displayModels =
