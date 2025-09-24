@@ -2,7 +2,6 @@ package com.company.books2trees.di
 
 import com.company.books2trees.domain.repository.AuthRepository
 import com.company.books2trees.domain.repository.BookRepository
-import com.company.books2trees.domain.repository.LibraryRepository
 import com.company.books2trees.domain.repository.PdfRepository
 import com.company.books2trees.domain.use_case.AddPdfUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
@@ -31,17 +30,17 @@ import org.koin.dsl.module
 val domainModule = module {
     // Use `factory` for stateless Use Cases
     factory { AddRecentBookUseCase(get<BookRepository>()) }
-    factory { DeleteLibraryBookUseCase(get<LibraryRepository>()) }
+    factory { DeleteLibraryBookUseCase(get<BookRepository>()) }
     factory { GetGenresUseCase(get<BookRepository>()) }
     factory { GetHomePageBooksUseCase(get<BookRepository>()) }
-    factory { GetProfileContentUseCase(get<LibraryRepository>()) }
+    factory { GetProfileContentUseCase(get<BookRepository>()) }
     factory { GetRecentBooksUseCase(get<BookRepository>()) }
     factory { GetSearchFilterUseCase(get<BookRepository>()) }
-    factory { InsertBookToLibraryUseCase(get<LibraryRepository>()) }
+    factory { InsertBookToLibraryUseCase(get<BookRepository>()) }
     factory { RemoveRecentBookUseCase(get<BookRepository>()) }
     factory { SearchBooksUseCase(get<BookRepository>()) }
     factory { SetSearchFilterUseCase(get<BookRepository>()) }
-    factory { UpdateLibraryItemUseCase(get<LibraryRepository>()) }
+    factory { UpdateLibraryItemUseCase(get<BookRepository>()) }
     factory { GetSignedInUserUseCase(get<AuthRepository>()) }
     factory { SignInWithGoogleTokenUseCase(get<AuthRepository>()) }
     factory { SignOutUseCase(get<AuthRepository>()) }

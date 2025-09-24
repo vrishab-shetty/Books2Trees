@@ -1,8 +1,10 @@
 package com.company.books2trees.data.local.book.impl
 
 import android.util.LruCache
+import com.company.books2trees.data.local.core.datasource.BookLocalDataSource
 import com.company.books2trees.data.local.core.preferences.UserPreferences
-import com.company.books2trees.data.local.recent.BookLocalDataSource
+import com.company.books2trees.data.local.library.mapper.toLibraryItemEntity
+import com.company.books2trees.data.local.library.model.LibraryItem
 import com.company.books2trees.data.local.recent.mapper.toBookModel
 import com.company.books2trees.data.local.recent.mapper.toRecentItemEntity
 import com.company.books2trees.data.remote.api.BookApi
@@ -11,8 +13,8 @@ import com.company.books2trees.data.remote.dto.search.mapper.toBookModel
 import com.company.books2trees.data.remote.dto.trending.mapper.toBookModel
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.domain.repository.BookRepository
+import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -22,7 +24,6 @@ class BookRepositoryImpl(
     private val localDataSource: BookLocalDataSource,
     private val userPreferences: UserPreferences
 ) : BookRepository {
-
 
     private val DEFAULT_GENRE = "All"
 
@@ -57,40 +58,45 @@ class BookRepositoryImpl(
             }
         }
 
-    override suspend fun addRecentBook(model: BookModel) = withContext(Dispatchers.IO) {
+    override suspend fun addRecentBook(model: BookModel) {
         val entity = model.toRecentItemEntity()
         localDataSource.insertRecentItem(entity)
     }
 
-    override suspend fun removeRecentBook(id: String) = withContext(Dispatchers.IO) {
-        localDataSource.deleteRecentItem(id)
-    }
+    override suspend fun removeRecentBook(id: String) = localDataSource.deleteRecentItem(id)
 
-    override fun getRecentBooksFlow(): Flow<List<BookModel>> {
-        return localDataSource.getAllRecentItems().map { recentItems ->
+    override fun getRecentBooksFlow() = localDataSource.getAllRecentItems().map { recentItems ->
             recentItems.map {
                 it.toBookModel()
             }
         }
-    }
 
-    override fun getSearchFilterFlow(): Flow<String> {
-        return userPreferences.getSearchFilter().map { savedFilter ->
+    override fun getSearchFilterFlow() = userPreferences.getSearchFilter().map { savedFilter ->
             savedFilter ?: DEFAULT_GENRE
         }
-    }
 
-    override suspend fun setSearchFilter(filter: String) {
-        userPreferences.setSearchFilter(filter)
-    }
+    override suspend fun setSearchFilter(filter: String) = userPreferences.setSearchFilter(filter)
 
-    override suspend fun getGenres(): List<String> {
-        return listOf(
+
+    override suspend fun getGenres() = listOf(
             "All", "Art", "Biography", "Business", "Children", "Comics",
             "Contemporary", "Cookbooks", "Crime", "Fantasy", "Fiction", "History",
             "Horror", "Comedy", "Music", "Mystery", "Nonfiction", "Philosophy",
             "Poetry", "Romance", "Science Fiction", "Self Help", "Sports",
             "Suspense", "Thriller"
         )
+
+    override fun getAllLibraryBooksFlow() = localDataSource.getAllLibraryItems()
+
+    override suspend fun insertLibraryBook(
+        model: BookModel, categoryId: LibraryPageItem.CategoryId
+    ) {
+        val entity = model.toLibraryItemEntity(categoryId)
+        localDataSource.insertLibraryItem(entity)
     }
+
+    override suspend fun deleteLibraryBook(id: String) = localDataSource.deleteLibraryItem(id)
+
+    override suspend fun updateLibraryBook(item: LibraryItem) =
+        localDataSource.updateLibraryItem(item)
 }
