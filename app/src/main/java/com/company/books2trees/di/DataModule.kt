@@ -1,19 +1,19 @@
 package com.company.books2trees.di
 
-import com.company.books2trees.data.local.book.impl.BookRepositoryImpl
-import com.company.books2trees.data.local.core.BookDatabase
-import com.company.books2trees.data.local.core.FileUtil
-import com.company.books2trees.data.local.core.datasource.BookLocalDataSource
-import com.company.books2trees.data.local.core.datasource.BookLocalDataSourceImpl
-import com.company.books2trees.data.local.core.preferences.UserPreferences
-import com.company.books2trees.data.local.core.preferences.UserPreferencesImpl
-import com.company.books2trees.data.local.library.api.LibraryDao
-import com.company.books2trees.data.local.pdf.PdfLocalDataSource
-import com.company.books2trees.data.local.pdf.PdfPageProviderFactory
-import com.company.books2trees.data.local.pdf.impl.PdfRepositoryImpl
-import com.company.books2trees.data.local.recent.api.RecentBookDao
-import com.company.books2trees.data.remote.api.BookApi
-import com.company.books2trees.data.remote.impl.BookApiImpl
+import com.company.books2trees.data.local.database.BookDatabase
+import com.company.books2trees.data.local.database.dao.LibraryBookDao
+import com.company.books2trees.data.local.database.dao.RecentBookDao
+import com.company.books2trees.data.local.datasource.api.BookLocalDataSource
+import com.company.books2trees.data.local.datasource.api.PdfLocalDataSource
+import com.company.books2trees.data.local.datasource.impl.BookLocalDataSourceImpl
+import com.company.books2trees.data.local.files.FileUtil
+import com.company.books2trees.data.local.files.pdf.PdfPageProviderFactory
+import com.company.books2trees.data.local.preferences.UserPreferences
+import com.company.books2trees.data.local.preferences.UserPreferencesImpl
+import com.company.books2trees.data.remote.datasource.api.BookRemoteDataSource
+import com.company.books2trees.data.remote.datasource.impl.BookRemoteDataSourceImpl
+import com.company.books2trees.data.repository.BookRepositoryImpl
+import com.company.books2trees.data.repository.PdfRepositoryImpl
 import com.company.books2trees.domain.repository.BookRepository
 import com.company.books2trees.domain.repository.PdfRepository
 import com.google.gson.Gson
@@ -30,8 +30,8 @@ val dataModule = module {
     single { FileUtil(context = androidContext()) }
     single { OkHttpClient() }
     single { Gson() }
-    single<BookApi> {
-        BookApiImpl(
+    single<BookRemoteDataSource> {
+        BookRemoteDataSourceImpl(
             get<OkHttpClient>(),
             get<Gson>()
         )
@@ -40,7 +40,7 @@ val dataModule = module {
     single<BookLocalDataSource> {
         BookLocalDataSourceImpl(
             get<RecentBookDao>(),
-            get<LibraryDao>()
+            get<LibraryBookDao>()
         )
     }
     single { PdfLocalDataSource() }
@@ -49,7 +49,7 @@ val dataModule = module {
     // Repositories
     single<BookRepository> {
         BookRepositoryImpl(
-            get<BookApi>(),
+            get<BookRemoteDataSource>(),
             get<BookLocalDataSource>(),
             get<UserPreferences>()
         )

@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.company.books2trees.data.local.library.mapper.toBookModel
-import com.company.books2trees.data.local.library.model.LibraryItem
+import com.company.books2trees.data.local.database.model.LibraryBookEntity
+import com.company.books2trees.data.mapper.toBookModelFromLibrary
 import com.company.books2trees.databinding.ItemLibraryBinding
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.presentation.home.callbacks.OnBookLongPressed
 import com.company.books2trees.presentation.utils.DiffAdapter
 
 class PageAdapter(
-    private var pages: MutableList<LibraryItem>,
+    private var pages: MutableList<LibraryBookEntity>,
     private val onItemClick: OnBookClicked,
     private val onItemLongClick: OnBookLongPressed,
-) : DiffAdapter<LibraryItem>(pages, { first, second -> first.id == second.id }) {
+) : DiffAdapter<LibraryBookEntity>(pages, { first, second -> first.id == second.id }) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
@@ -57,8 +57,8 @@ class PageAdapter(
             }
         }
 
-        fun bind(page: LibraryItem) {
-            binding.model = page.toBookModel()
+        fun bind(page: LibraryBookEntity) {
+            binding.model = page.toBookModelFromLibrary()
             binding.executePendingBindings()
         }
     }

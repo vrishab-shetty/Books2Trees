@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.R
-import com.company.books2trees.data.local.library.model.LibraryItem
+import com.company.books2trees.data.local.database.model.LibraryBookEntity
 import com.company.books2trees.databinding.LibraryViewpagerBinding
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
@@ -114,7 +114,7 @@ class ViewPagerAdapter(
     ) : ViewHolder(binding.root), OnBookLongPressed {
 
 
-        fun bind(page: List<LibraryItem>) {
+        fun bind(page: List<LibraryBookEntity>) {
             binding.pageRecyclerview.apply {
                 adapter?.let {
                     (adapter as? PageAdapter)?.updateList(page)

@@ -1,11 +1,11 @@
 package com.company.books2trees.presentation.profile
 
 import androidx.recyclerview.widget.DiffUtil
-import com.company.books2trees.data.local.library.model.LibraryItem
+import com.company.books2trees.data.local.database.model.LibraryBookEntity
 
 data class LibraryPageItem(
     val categoryId: CategoryId,
-    val items: List<LibraryItem>
+    val items: List<LibraryBookEntity>
 ) {
     enum class CategoryId {
         None,

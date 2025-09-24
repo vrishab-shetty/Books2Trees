@@ -2,7 +2,7 @@ package com.company.books2trees.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.data.local.library.model.LibraryItem
+import com.company.books2trees.data.local.database.model.LibraryBookEntity
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.DeleteLibraryBookUseCase
@@ -60,7 +60,7 @@ class ProfileViewModel(
         }
     }
 
-    fun onChangedCategory(item: LibraryItem) {
+    fun onChangedCategory(item: LibraryBookEntity) {
         viewModelScope.launch {
             updateLibraryItem(item)
         }
