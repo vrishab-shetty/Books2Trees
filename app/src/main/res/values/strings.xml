@@ -41,4 +41,6 @@
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_dialog">Are you sure, do you want to logout?</string>
+    <string name="no_items">No items</string>
+    <string name="pdf_error_text">Could not load PDF</string>
 </resources>

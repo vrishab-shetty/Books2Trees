@@ -18,6 +18,7 @@ class FilterBottomSheetDialogFragment : ViewBindingBottomSheetDialogFragment<Sel
 ) {
 
     private val vm: SearchViewModel by sharedViewModel()
+    private lateinit var genreAdapter: ArrayAdapter<String>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -25,7 +26,22 @@ class FilterBottomSheetDialogFragment : ViewBindingBottomSheetDialogFragment<Sel
         setupListView()
         setupApplyButton()
         setupCancelButton()
+        observeGenreList()
         observeSelectedFilter()
+    }
+
+    private fun observeGenreList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.genreList.collect { genres ->
+                    genreAdapter.apply {
+                        clear()
+                        addAll(genres)
+                        notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 
     private fun setupCancelButton() = useBinding { binding ->
@@ -41,11 +57,9 @@ class FilterBottomSheetDialogFragment : ViewBindingBottomSheetDialogFragment<Sel
         }
     }
 
-    private fun setupListView() = {
-        val genreAdapter = ArrayAdapter(
-            requireContext(),
-            R.layout.filter_single_choice, // Use Android's built-in layout
-            vm.genreList
+    private fun setupListView() {
+        genreAdapter = ArrayAdapter(
+            requireContext(), R.layout.filter_single_choice, mutableListOf()
         )
 
         useBinding { binding ->
@@ -53,7 +67,8 @@ class FilterBottomSheetDialogFragment : ViewBindingBottomSheetDialogFragment<Sel
                 adapter = genreAdapter
                 choiceMode = ListView.CHOICE_MODE_SINGLE
                 setOnItemClickListener { _, _, position, _ ->
-                    vm.onFilterItemClicked(position)
+                    val selectedGenre = genreAdapter.getItem(position)
+                    vm.onFilterItemClicked(selectedGenre!!)
                 }
             }
         }
@@ -65,7 +80,7 @@ class FilterBottomSheetDialogFragment : ViewBindingBottomSheetDialogFragment<Sel
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.selectedFilter.collect { currentFilter ->
                     // Find the position of the current filter in the list
-                    val position = vm.genreList.indexOf(currentFilter)
+                    val position = genreAdapter.getPosition(currentFilter)
                     if (position != -1) {
                         // Update the ListView's selection
                         useBinding { binding -> binding.listview.setItemChecked(position, true) }

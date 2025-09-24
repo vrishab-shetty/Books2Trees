@@ -1,7 +1,7 @@
 package com.company.books2trees.presentation.profile
 
 import androidx.recyclerview.widget.DiffUtil
-import com.company.books2trees.data.local.model.LibraryItem
+import com.company.books2trees.data.local.library.model.LibraryItem
 
 data class LibraryPageItem(
     val categoryId: CategoryId,

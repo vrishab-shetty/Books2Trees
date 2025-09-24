@@ -67,13 +67,13 @@ class HomeAdapter(
         position: Int,
         payloads: List<Any?>
     ) {
-        if(payloads.isEmpty()) {
+        if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads)
             return
         }
 
         val lastPayLoad = payloads.last()
-        if(holder is HeaderViewHolder && lastPayLoad is HomePageListPayload.RecentBooksPayload) {
+        if (holder is HeaderViewHolder && lastPayLoad is HomePageListPayload.RecentBooksPayload) {
             holder.updateBookList(lastPayLoad.books)
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -165,8 +165,8 @@ class HomeAdapter(
             newItem: HomePageListItem
         ): Any? {
 
-            if(oldItem is HomePageListItem.RecentBooks && newItem is HomePageListItem.RecentBooks) {
-                if(oldItem.books != newItem.books) {
+            if (oldItem is HomePageListItem.RecentBooks && newItem is HomePageListItem.RecentBooks) {
+                if (oldItem.books != newItem.books) {
                     return HomePageListPayload.RecentBooksPayload(newItem.books)
                 }
             }

@@ -2,17 +2,28 @@ package com.company.books2trees.presentation.info.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.databinding.ItemImportPdfBinding
 import com.company.books2trees.domain.model.PdfModel
+
+object PdfModelDiffCallback : DiffUtil.ItemCallback<PdfModel>() {
+    override fun areItemsTheSame(oldItem: PdfModel, newItem: PdfModel) =
+        oldItem === newItem
+
+
+    override fun areContentsTheSame(oldItem: PdfModel, newItem: PdfModel) =
+        oldItem.name == newItem.name
+
+}
 
 class PdfListAdapter(
     private val inflater: LayoutInflater,
     private val onItemClick: (PdfModel) -> Unit,
     private val onOptionsCLick: (PdfModel) -> Unit
 ) :
-    ListAdapter<PdfModel, PdfListAdapter.PdfViewHolder>(PdfModel.PdfModelDiffCallback) {
+    ListAdapter<PdfModel, PdfListAdapter.PdfViewHolder>(PdfModelDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         PdfViewHolder(
             ItemImportPdfBinding.inflate(inflater, parent, false),

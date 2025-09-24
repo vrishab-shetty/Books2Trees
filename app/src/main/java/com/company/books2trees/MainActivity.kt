@@ -4,25 +4,16 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.company.books2trees.data.repository.AuthRepository // CHANGED: Import the repository
 import com.company.books2trees.databinding.ActivityMainBinding
-import com.company.books2trees.presentation.common.AppAdManager
-import com.company.books2trees.presentation.common.OnViewProfile
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 
-class MainActivity : AppCompatActivity(), OnViewProfile {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val authRepository: AuthRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        AppAdManager.initialize(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,15 +27,6 @@ class MainActivity : AppCompatActivity(), OnViewProfile {
             binding.navRailView.visibility = View.GONE
         } else {
             binding.bottomNavbar.visibility = View.GONE
-        }
-    }
-
-    override fun getData() = authRepository.user.value
-
-    override fun signOut(callback: () -> Unit) {
-        lifecycleScope.launch {
-            authRepository.signOut()
-            callback.invoke()
         }
     }
 }

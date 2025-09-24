@@ -2,22 +2,31 @@ package com.company.books2trees.presentation.info
 
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.navArgs
-import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.databinding.ActivityPdfViewBinding
-import com.company.books2trees.presentation.common.PdfViewState
 import com.company.books2trees.presentation.info.adapter.ViewPdfAdapter
-import com.company.books2trees.presentation.utils.UIHelper
 import com.company.books2trees.presentation.utils.UIHelper.setUpToolbar
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 
 class ViewPdfActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPdfViewBinding
     private val args: InfoFragmentArgs by navArgs()
-    private val vm: ViewPdfViewModel by viewModels()
+
+    // Inject the ViewModel using Koin's delegate.
+    // Use parametersOf to pass the runtime pdfUri from navArgs to the ViewModel's constructor.
+    private val vm: PdfViewerViewModel by viewModel {
+        parametersOf(args.pdfFileUri)
+    }
+
+    private lateinit var viewPdfAdapter: ViewPdfAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,30 +37,45 @@ class ViewPdfActivity : AppCompatActivity() {
         binding = ActivityPdfViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val model = vm.getModel(args.id)
-        val adapter = ViewPdfAdapter(null, layoutInflater, UIHelper.getScreenWidth(this))
+        // Assumes 'args.pdfName' is the string key for the PDF's name.
+        setUpToolbar(args.pdfName)
+        setupViewPager()
+        observeUiState()
+    }
 
-        model?.let {
-            this.setUpToolbar(it.name)
-            binding.viewPdf.apply {
-                orientation = ViewPager2.ORIENTATION_HORIZONTAL
-                this.adapter = adapter
-            }
-        }
 
-        vm.renderer.observe(this) { viewState ->
-            when (viewState) {
-                is PdfViewState.Loading -> {
-                }
+    private fun setupViewPager() {
+        viewPdfAdapter = ViewPdfAdapter(vm, lifecycleScope)
+        binding.viewPdf.adapter = viewPdfAdapter
+    }
 
-                is PdfViewState.Content ->
-                    adapter.setRenderer(viewState.renderer)
-
-                is PdfViewState.Error -> {
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+                vm.uiState.collect { state ->
+                    handleState(state)
                 }
             }
-
         }
     }
 
+    private fun handleState(state: PdfViewerUiState) {
+        when (state) {
+            is PdfViewerUiState.Loading -> {
+            }
+
+            is PdfViewerUiState.Content -> {
+                // Notify the adapter that the item count is now available.
+                viewPdfAdapter.notifyDataSetChanged()
+            }
+
+            is PdfViewerUiState.Error -> {
+                binding.errorText.text = state.message
+            }
+        }
+        binding.viewPdf.isVisible = state is PdfViewerUiState.Content
+        binding.progressBar.isVisible = state is PdfViewerUiState.Loading
+        binding.errorText.isVisible = state is PdfViewerUiState.Error
+    }
 }
+

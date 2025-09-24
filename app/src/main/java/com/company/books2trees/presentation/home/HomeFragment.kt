@@ -12,8 +12,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.databinding.FragmentHomeBinding
+import com.company.books2trees.domain.ads.AdManager
 import com.company.books2trees.domain.model.BookModel
-import com.company.books2trees.presentation.common.AppAdManager
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.home.adapter.HomeAdapter
 import com.company.books2trees.presentation.home.adapter.HomePageList
@@ -22,12 +22,14 @@ import com.company.books2trees.presentation.home.viewState.HomeViewState
 import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val vm: HomeViewModel by viewModel()
+    private val adManager: AdManager by inject()
 
     private lateinit var homeAdapter: HomeAdapter
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -37,6 +39,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
         setupPageList()
         observeViewModel()
+        observeNavigationEvents()
 
     }
 
@@ -72,14 +75,13 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 }
 
                 override fun openBook(model: BookModel) {
-                    this@HomeFragment.openBook(model)
+                    vm.onBookClicked(model)
                 }
             }
         )
     }
 
     private fun observeViewModel() {
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.items.collectLatest { viewState ->
@@ -89,6 +91,30 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                     }
                     if (viewState is HomeViewState.Content) {
                         updateAdapterList(viewState)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeNavigationEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.navigationEvent.collect { event ->
+                    when (event) {
+                        is NavigationEvent.ShowAdAndOpenUrl -> {
+                            adManager.showAd(requireActivity()) { wasRewardGranted ->
+                                if (wasRewardGranted) openUrl(event.url)
+                            }
+                        }
+
+                        is NavigationEvent.ShowToastMessage -> {
+                            Toast.makeText(
+                                context,
+                                event.message,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
             }
@@ -108,18 +134,8 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
         homeAdapter.submitList(items)
     }
 
-    fun openBook(model: BookModel) {
-        vm.onBookClicked(model)
-
-        if (AppAdManager.isAdReady()) {
-            AppAdManager.showAd(requireActivity()) {
-                startActivity(Intent(Intent.ACTION_VIEW).apply {
-                    data = model.url?.toUri()
-                })
-            }
-        } else {
-            Toast.makeText(context, "Ad not ready opening content.", Toast.LENGTH_LONG).show()
-        }
+    private fun openUrl(url: String) {
+        startActivity(Intent(Intent.ACTION_VIEW).apply { data = url.toUri() })
     }
 
 }

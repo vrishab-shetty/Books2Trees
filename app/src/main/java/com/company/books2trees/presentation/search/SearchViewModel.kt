@@ -1,5 +1,6 @@
 package com.company.books2trees.presentation.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.domain.model.BookModel
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -25,7 +26,6 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(
-    // The ViewModel now depends only on Use Cases
     private val searchBooks: SearchBooksUseCase,
     private val addRecentBook: AddRecentBookUseCase,
     getGenres: GetGenresUseCase,
@@ -33,13 +33,16 @@ class SearchViewModel(
     private val setSearchFilter: SetSearchFilterUseCase
 ) : ViewModel() {
 
+    private val TAG = "SearchViewModel"
+
     private val _navigationEvent = MutableSharedFlow<String>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     private val _selectedFilter = MutableStateFlow("")
-    val selectedFilter: StateFlow<String> get() = _selectedFilter.asStateFlow()
+    val selectedFilter = _selectedFilter.asStateFlow()
 
-    val genreList: List<String> = getGenres()
+    private val _genreList = MutableStateFlow<List<String>>(emptyList())
+    val genreList: StateFlow<List<String>> = _genreList.asStateFlow()
 
     private val query = MutableStateFlow("")
 
@@ -47,33 +50,27 @@ class SearchViewModel(
         .combine(selectedFilter) { query, filter -> Pair(query, filter) }
         .flatMapLatest { (query, filter) ->
             if (query.isBlank()) {
-                flow<ResultViewState> {
-                    emit(ResultViewState.Content(emptyList()))
-                }
+                flowOf(ResultViewState.Content(emptyList()))
             } else {
-                flow {
-                    emit(ResultViewState.Loading)
-                    try {
-                        val books = searchBooks(query, filter)
-                        emit(ResultViewState.Content(books))
-                    } catch (e: Exception) {
-                        emit(ResultViewState.Error(e))
-                    }
+                toResultFlow {
+                    searchBooks(query, filter)
                 }
             }
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ResultViewState.Loading // This will now compile correctly
+            initialValue = ResultViewState.Loading
         )
 
     init {
         viewModelScope.launch {
-            getSearchFilter().onEach { savedFilter ->
-                _selectedFilter.value = savedFilter
-            }.launchIn(this)
+            _genreList.value = getGenres()
         }
+
+        getSearchFilter().onEach { savedFilter ->
+            _selectedFilter.value = savedFilter
+        }.launchIn(viewModelScope)
     }
 
     fun onQueryChanged(newQuery: String) {
@@ -82,20 +79,26 @@ class SearchViewModel(
 
     fun onBookClicked(model: BookModel) {
         viewModelScope.launch {
-            addRecentBook(model)
-            model.url?.let {
-                _navigationEvent.emit(it)
-            }
+            runCatching {
+                addRecentBook(model)
+                model.url
+            }.onSuccess { url ->
+                url?.let { _navigationEvent.emit(it) }
+            }.onFailure { exception -> Log.e(TAG, "Failed to add recent book", exception) }
+
         }
     }
 
-    fun onFilterItemClicked(position: Int) {
-        _selectedFilter.value = genreList[position]
+    fun onFilterItemClicked(filter: String) {
+        _selectedFilter.value = filter
     }
 
     fun applyFilter() {
         viewModelScope.launch {
-            setSearchFilter(_selectedFilter.value)
+            runCatching {
+                setSearchFilter(_selectedFilter.value)
+            }.onFailure { exception -> Log.e(TAG, "Failed to set search filter", exception) }
+
         }
     }
 }
