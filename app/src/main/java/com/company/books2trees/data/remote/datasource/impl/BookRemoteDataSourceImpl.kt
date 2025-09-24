@@ -68,9 +68,9 @@ class BookRemoteDataSourceImpl(
                     // In a real app, you'd want to log this error.
                     return@withContext null
                 }
-                val jsonString = response.body?.string()
+                val jsonString = response.body.string()
                 gson.fromJson(jsonString, T::class.java)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Log the exception
                 null
             }
