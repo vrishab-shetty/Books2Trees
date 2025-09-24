@@ -1,7 +1,7 @@
 package com.company.books2trees.data.local.book.impl
 
 import android.util.LruCache
-import com.company.books2trees.data.local.core.DataStoreManager
+import com.company.books2trees.data.local.core.preferences.UserPreferences
 import com.company.books2trees.data.local.recent.BookLocalDataSource
 import com.company.books2trees.data.local.recent.mapper.toBookModel
 import com.company.books2trees.data.local.recent.mapper.toRecentItemEntity
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 class BookRepositoryImpl(
     private val remoteDataSource: BookApi,
     private val localDataSource: BookLocalDataSource,
-    private val dataStoreManager: DataStoreManager
+    private val userPreferences: UserPreferences
 ) : BookRepository {
 
 
@@ -75,13 +75,13 @@ class BookRepositoryImpl(
     }
 
     override fun getSearchFilterFlow(): Flow<String> {
-        return dataStoreManager.getSearchFilter().map { savedFilter ->
+        return userPreferences.getSearchFilter().map { savedFilter ->
             savedFilter ?: DEFAULT_GENRE
         }
     }
 
     override suspend fun setSearchFilter(filter: String) {
-        dataStoreManager.setSearchFilter(filter)
+        userPreferences.setSearchFilter(filter)
     }
 
     override suspend fun getGenres(): List<String> {

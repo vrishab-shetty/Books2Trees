@@ -2,8 +2,9 @@ package com.company.books2trees.di
 
 import com.company.books2trees.data.local.book.impl.BookRepositoryImpl
 import com.company.books2trees.data.local.core.BookDatabase
-import com.company.books2trees.data.local.core.DataStoreManager
 import com.company.books2trees.data.local.core.FileUtil
+import com.company.books2trees.data.local.core.preferences.UserPreferences
+import com.company.books2trees.data.local.core.preferences.UserPreferencesImpl
 import com.company.books2trees.data.local.library.api.LibraryDao
 import com.company.books2trees.data.local.library.impl.LibraryRepositoryImpl
 import com.company.books2trees.data.local.pdf.PdfLocalDataSource
@@ -31,7 +32,7 @@ val dataModule = module {
     single { OkHttpClient() }
     single { Gson() }
     single<BookApi> { BookApiImpl(get<OkHttpClient>(), get<Gson>()) }
-    single { DataStoreManager(androidContext()) }
+    single<UserPreferences> { UserPreferencesImpl(androidContext()) }
     single { BookLocalDataSource(get<RecentBookDao>()) }
     single { PdfLocalDataSource() }
     single { PdfPageProviderFactory(androidContext()) }
@@ -41,7 +42,7 @@ val dataModule = module {
         BookRepositoryImpl(
             get<BookApi>(),
             get<BookLocalDataSource>(),
-            get<DataStoreManager>()
+            get<UserPreferences>()
         )
     }
     single<LibraryRepository> { LibraryRepositoryImpl(get<LibraryDao>()) }
