@@ -2,6 +2,7 @@ package com.company.books2trees.data.sdk
 
 import android.app.Activity
 import android.app.Application
+import com.company.books2trees.BuildConfig
 import com.company.books2trees.domain.ads.AdManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -12,7 +13,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 class AdManagerImpl(private val application: Application) : AdManager {
 
     private var rewardedAd: RewardedAd? = null
-    private val AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
+    private val adUnitId = BuildConfig.REWARDED_AD_UNIT_ID
 
     init {
         loadAd()
@@ -27,7 +28,7 @@ class AdManagerImpl(private val application: Application) : AdManager {
 
         RewardedAd.load(
             application,
-            AD_UNIT_ID,
+            adUnitId,
             adRequest,
             object : RewardedAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
