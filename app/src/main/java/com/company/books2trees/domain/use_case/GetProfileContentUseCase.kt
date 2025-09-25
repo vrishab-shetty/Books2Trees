@@ -14,7 +14,7 @@ class GetProfileContentUseCase(
     private val bookRepository: BookRepository
 ) {
     operator fun invoke(): Flow<List<LibraryPageItem>> {
-        return bookRepository.getAllLibraryBooksFlow().map { models ->
+        return bookRepository.getAllLibraryBooks().map { models ->
             // The logic to group by category is a business rule.
             CategoryId.entries
                 .associateWith { categoryId -> models.filter { it.categoryId == categoryId } }

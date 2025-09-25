@@ -6,6 +6,6 @@ class DeleteLibraryBookUseCase(
     private val bookRepository: BookRepository
 ) {
     suspend operator fun invoke(id: String) {
-        bookRepository.deleteLibraryBook(id)
+        bookRepository.removeLibraryBook(id)
     }
 }

@@ -8,6 +8,6 @@ class InsertBookToLibraryUseCase(
     private val bookRepository: BookRepository
 ) {
     suspend operator fun invoke(model: BookModel, categoryId: LibraryPageItem.CategoryId) {
-        bookRepository.insertLibraryBook(model, categoryId)
+        bookRepository.addLibraryBook(model, categoryId)
     }
 }

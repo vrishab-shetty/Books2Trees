@@ -25,8 +25,8 @@ val dataModule = module {
 
     // Low-Level Concerns (Database, DAOs, API services, /...)
     single { BookDatabase[androidContext()] }
-    single { get<BookDatabase>().libraryDao() }
-    single { get<BookDatabase>().recentDao() }
+    single { get<BookDatabase>().libraryBookDao() }
+    single { get<BookDatabase>().recentBookDao() }
     single { FileUtil(context = androidContext()) }
     single { OkHttpClient() }
     single { Gson() }

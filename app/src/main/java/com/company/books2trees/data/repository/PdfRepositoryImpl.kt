@@ -52,7 +52,7 @@ class PdfRepositoryImpl(
             thumbnailPath = thumbnailPath
         )
 
-        pdfLocalDataSource.savePdf(entity)
+        pdfLocalDataSource.insertPdf(entity)
     }
 
     override suspend fun removePdf(modelId: String) {
@@ -60,6 +60,6 @@ class PdfRepositoryImpl(
         entity?.thumbnailPath?.let {
             fileUtil.deleteFile(it.toUri())
         }
-        pdfLocalDataSource.removePdf(modelId)
+        pdfLocalDataSource.deletePdf(modelId)
     }
 }

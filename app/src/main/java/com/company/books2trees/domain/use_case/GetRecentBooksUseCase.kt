@@ -8,6 +8,6 @@ class GetRecentBooksUseCase(
     private val bookRepository: BookRepository
 ) {
     operator fun invoke(): Flow<List<BookModel>> {
-        return bookRepository.getRecentBooksFlow()
+        return bookRepository.getRecentBooks()
     }
 }

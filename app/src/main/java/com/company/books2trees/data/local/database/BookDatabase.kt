@@ -25,9 +25,9 @@ private const val DATABASE_NAME = "books2trees.db"
 @TypeConverters(Converters::class)
 abstract class BookDatabase : RoomDatabase() {
 
-    abstract fun libraryDao(): LibraryBookDao
+    abstract fun libraryBookDao(): LibraryBookDao
 
-    abstract fun recentDao(): RecentBookDao
+    abstract fun recentBookDao(): RecentBookDao
 
     companion object {
         @Volatile

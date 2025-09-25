@@ -15,13 +15,13 @@ class PdfLocalDataSource {
         pdfsFlow.map { it.values.toList() }
     }
 
-    suspend fun savePdf(entity: PdfItem) = withContext(Dispatchers.IO) {
+    suspend fun insertPdf(entity: PdfItem) = withContext(Dispatchers.IO) {
         pdfsFlow.update { currentMap ->
             currentMap + (entity.id to entity)
         }
     }
 
-    suspend fun removePdf(modelId: String) = withContext(Dispatchers.IO) {
+    suspend fun deletePdf(modelId: String) = withContext(Dispatchers.IO) {
         pdfsFlow.update { currentMap ->
             currentMap - modelId
         }

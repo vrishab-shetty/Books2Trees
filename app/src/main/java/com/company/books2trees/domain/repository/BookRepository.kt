@@ -14,12 +14,12 @@ interface BookRepository {
     suspend fun removeRecentBook(id: String)
     suspend fun setSearchFilter(filter: String)
     suspend fun getGenres(): List<String>
-    suspend fun insertLibraryBook(model: BookModel, categoryId: LibraryPageItem.CategoryId)
-    suspend fun deleteLibraryBook(id: String)
+    suspend fun addLibraryBook(model: BookModel, categoryId: LibraryPageItem.CategoryId)
+    suspend fun removeLibraryBook(id: String)
     suspend fun updateLibraryBook(item: LibraryBookEntity)
 
     // Flow operations
-    fun getRecentBooksFlow(): Flow<List<BookModel>>
-    fun getSearchFilterFlow(): Flow<String>
-    fun getAllLibraryBooksFlow(): Flow<List<LibraryBookEntity>>
+    fun getRecentBooks(): Flow<List<BookModel>>
+    fun getSearchFilter(): Flow<String>
+    fun getAllLibraryBooks(): Flow<List<LibraryBookEntity>>
 }

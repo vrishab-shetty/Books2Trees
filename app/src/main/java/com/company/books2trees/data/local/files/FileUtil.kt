@@ -3,7 +3,6 @@ package com.company.books2trees.data.local.files
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.core.net.toFile
 import kotlinx.coroutines.Dispatchers
@@ -15,59 +14,23 @@ import kotlin.math.roundToInt
 
 class FileUtil(private val context: Context) {
 
-    fun isGoogleDrive(uri: Uri): Boolean {
-        return uri.authority.equals("com.google.android.apps.docs.storage", ignoreCase = true)
-    }
 
-    fun isExternalStorageDocument(uri: Uri): Boolean {
-        return "com.android.externalstorage.documents" == uri.authority
-    }
-
-    fun isDownloadsDocument(uri: Uri): Boolean {
-        return "com.android.providers.downloads.documents" == uri.authority
-    }
-
-
-    fun isMediaDocument(uri: Uri): Boolean {
-        return "com.android.providers.media.documents" == uri.authority
-    }
-
-
-    fun getDataColumn(
-        uri: Uri?, selection: String?, selectionArgs: Array<String?>?
-    ): String? {
-
-        val column = MediaStore.Images.Media.DATA
-        val projection = arrayOf(
-            column
-        )
-
-        context.contentResolver.query(
-            uri!!, projection, selection, selectionArgs, null
-        )?.use {
-            val columnIndex = it.getColumnIndexOrThrow(column)
-            return it.getString(columnIndex)
-        }
-
-        return null
-    }
-
-    private fun makeEmptyFileIntoExternalStorageWithTitle(
+    private suspend fun makeEmptyFileIntoExternalStorageWithTitle(
         title: String,
         directory: String
-    ): File {
+    ): File = withContext(Dispatchers.IO) {
 
         val appDir = File(context.getExternalFilesDir(null), directory)
         if (!appDir.exists()) {
             appDir.mkdir()
         }
 
-        return File(appDir.absolutePath, title)
+        File(appDir.absolutePath, title)
     }
 
 
     @Throws(IOException::class)
-    fun getFileName(uri: Uri): String? {
+    suspend fun getFileName(uri: Uri): String? = withContext(Dispatchers.IO) {
 
         var name: String? = null
 
@@ -78,11 +41,11 @@ class FileUtil(private val context: Context) {
 
         }
 
-        return name
+        name
     }
 
     @Throws(IOException::class)
-    fun getFileSize(uri: Uri): String? {
+    suspend fun getFileSize(uri: Uri): String? = withContext(Dispatchers.IO) {
         var size: String? = null
 
         context.contentResolver.query(uri, null, null, null, null, null)?.use { cursor ->
@@ -105,12 +68,12 @@ class FileUtil(private val context: Context) {
         }
 
 
-        return size
+        size
     }
 
     @Throws(SecurityException::class, IOException::class)
-    fun deleteFile(uri: Uri): Boolean {
-        return if ("file" == uri.scheme) {
+    suspend fun deleteFile(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+        if ("file" == uri.scheme) {
             uri.toFile().delete()
         } else {
             try {
