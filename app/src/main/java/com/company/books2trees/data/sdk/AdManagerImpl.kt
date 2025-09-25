@@ -23,8 +23,6 @@ class AdManagerImpl(private val application: Application) : AdManager {
         loadAd()
     }
 
-    override fun isAdReady(): Boolean = rewardedAd != null
-
     private fun loadAd() {
         if (rewardedAd != null) return
 
