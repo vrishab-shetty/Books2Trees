@@ -1,5 +1,7 @@
 package com.company.books2trees.di
 
+import com.company.books2trees.data.local.files.FileUtil
+import com.company.books2trees.data.local.files.pdf.PdfPageProviderFactory
 import com.company.books2trees.domain.repository.AuthRepository
 import com.company.books2trees.domain.repository.BookSearchRepository
 import com.company.books2trees.domain.repository.LibraryRepository
@@ -51,6 +53,6 @@ val domainModule = module {
     factory { GetPdfPageBitmapUseCase() }
     factory { OpenPdfUseCase(androidContext()) }
     factory { GetPdfsUseCase(get<PdfRepository>()) }
-    factory { AddPdfUseCase(get<PdfRepository>()) }
-    factory { RemovePdfUseCase(get<PdfRepository>()) }
+    factory { AddPdfUseCase(get<PdfRepository>(), get<PdfPageProviderFactory>(), get<FileUtil>()) }
+    factory { RemovePdfUseCase(get<PdfRepository>(), get<FileUtil>()) }
 }

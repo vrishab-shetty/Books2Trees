@@ -71,9 +71,7 @@ val dataModule = module {
     }
     single<PdfRepository> {
         PdfRepositoryImpl(
-            get<FileUtil>(),
-            get<PdfLocalDataSource>(),
-            get<PdfPageProviderFactory>()
+            get<PdfLocalDataSource>()
         )
     }
     single<RecentBooksRepository> {
