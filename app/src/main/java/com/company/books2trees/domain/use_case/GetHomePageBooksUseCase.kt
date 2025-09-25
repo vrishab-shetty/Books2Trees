@@ -1,17 +1,17 @@
 package com.company.books2trees.domain.use_case
 
 import com.company.books2trees.domain.model.BookModel
-import com.company.books2trees.domain.repository.BookRepository
+import com.company.books2trees.domain.repository.BookSearchRepository
 import com.company.books2trees.presentation.utils.UIHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
-class GetHomePageBooksUseCase(private val bookRepository: BookRepository) {
+class GetHomePageBooksUseCase(private val bookSearchRepository: BookSearchRepository) {
 
     suspend operator fun invoke(): Map<Int, List<BookModel>> = withContext(Dispatchers.IO) {
         // Fetch popular and awarded books in parallel for efficiency
-        val popularItemsDeferred = async { bookRepository.getTrendingBooks() }
+        val popularItemsDeferred = async { bookSearchRepository.getTrendingBooks() }
         val awardedItemsDeferred = async { fetchAwardedBooks() }
 
         val popularItems = popularItemsDeferred.await()
@@ -36,7 +36,7 @@ class GetHomePageBooksUseCase(private val bookRepository: BookRepository) {
     private suspend fun fetchAwardedBooks(): List<BookModel> {
         val subjects = listOf("national_book_award", "booker_prize", "newbery_medal")
         return subjects.flatMap { subject ->
-            bookRepository.getBooksBySubject(subject, limit = 5)
+            bookSearchRepository.getBooksBySubject(subject, limit = 5)
         }
     }
 }

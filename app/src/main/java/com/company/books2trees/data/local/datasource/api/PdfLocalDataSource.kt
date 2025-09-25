@@ -1,5 +1,6 @@
 package com.company.books2trees.data.local.datasource.api
 
+import com.company.books2trees.data.local.datasource.impl.PdfLocalDataSource
 import com.company.books2trees.data.local.model.PdfItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -8,26 +9,24 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-class PdfLocalDataSource {
+class PdfLocalDataSourceImpl : PdfLocalDataSource {
     private val pdfsFlow = MutableStateFlow<Map<String, PdfItem>>(emptyMap())
 
-    suspend fun getItems(): Flow<List<PdfItem>> = withContext(Dispatchers.IO) {
-        pdfsFlow.map { it.values.toList() }
-    }
+    override fun getItems(): Flow<List<PdfItem>> = pdfsFlow.map { it.values.toList() }
 
-    suspend fun insertPdf(entity: PdfItem) = withContext(Dispatchers.IO) {
+    override suspend fun insertPdf(entity: PdfItem) = withContext(Dispatchers.IO) {
         pdfsFlow.update { currentMap ->
             currentMap + (entity.id to entity)
         }
     }
 
-    suspend fun deletePdf(modelId: String) = withContext(Dispatchers.IO) {
+    override suspend fun deletePdf(modelId: String) = withContext(Dispatchers.IO) {
         pdfsFlow.update { currentMap ->
             currentMap - modelId
         }
     }
 
-    suspend fun findItemById(id: String): PdfItem? = withContext(Dispatchers.IO) {
+    override suspend fun findItemById(id: String): PdfItem? = withContext(Dispatchers.IO) {
         pdfsFlow.value[id]
     }
 }

@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.company.books2trees.data.local.database.model.LibraryBookEntity
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
-import com.company.books2trees.domain.use_case.DeleteLibraryBookUseCase
 import com.company.books2trees.domain.use_case.GetProfileContentUseCase
+import com.company.books2trees.domain.use_case.RemoveLibraryBookUseCase
 import com.company.books2trees.domain.use_case.UpdateLibraryItemUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val getProfileContent: GetProfileContentUseCase,
     private val addRecentBook: AddRecentBookUseCase,
-    private val deleteLibraryBook: DeleteLibraryBookUseCase,
+    private val deleteLibraryBook: RemoveLibraryBookUseCase,
     private val updateLibraryItem: UpdateLibraryItemUseCase
 ) : ViewModel() {
 

@@ -1,7 +1,7 @@
 package com.company.books2trees.domain.use_case
 
-import com.company.books2trees.domain.repository.BookRepository
+import com.company.books2trees.domain.repository.UserPreferencesRepository
 
-class GetGenresUseCase(private val bookRepository: BookRepository) {
-    suspend operator fun invoke(): List<String> = bookRepository.getGenres()
+class GetGenresUseCase(private val userPreferencesRepository: UserPreferencesRepository) {
+    suspend operator fun invoke(): List<String> = userPreferencesRepository.getGenres()
 }

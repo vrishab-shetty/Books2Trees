@@ -3,10 +3,10 @@ package com.company.books2trees.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.use_case.AddBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
-import com.company.books2trees.domain.use_case.InsertBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
 import com.company.books2trees.presentation.home.viewState.HomeViewState
 import com.company.books2trees.presentation.profile.LibraryPageItem
@@ -20,7 +20,7 @@ class HomeViewModel(
     private val getRecentBooks: GetRecentBooksUseCase,
     private val addRecentBook: AddRecentBookUseCase,
     private val removeRecentBook: RemoveRecentBookUseCase,
-    private val insertBookToLibrary: InsertBookToLibraryUseCase
+    private val insertBookToLibrary: AddBookToLibraryUseCase
 ) : ViewModel() {
 
     private val _items: MutableStateFlow<HomeViewState> = MutableStateFlow(

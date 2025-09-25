@@ -2,7 +2,7 @@ package com.company.books2trees.data.repository
 
 import android.net.Uri
 import androidx.core.net.toUri
-import com.company.books2trees.data.local.datasource.api.PdfLocalDataSource
+import com.company.books2trees.data.local.datasource.impl.PdfLocalDataSource
 import com.company.books2trees.data.local.files.FileUtil
 import com.company.books2trees.data.local.files.pdf.PdfPageProviderFactory
 import com.company.books2trees.data.local.model.PdfItem
@@ -18,7 +18,7 @@ class PdfRepositoryImpl(
     private val pageProviderFactory: PdfPageProviderFactory
 ) : PdfRepository {
 
-    private val DIRECTORY_THUMBNAILS = "thumbnails"
+    private val thumbnailDirectory = "thumbnails"
 
     override suspend fun getItemsFlow() =
         pdfLocalDataSource.getItems().map { it.map(::toPdfModel) }
@@ -40,7 +40,7 @@ class PdfRepositoryImpl(
             fileUtil.saveBitmapFileIntoExternalStorageWithTitle(
                 it,
                 newId,
-                DIRECTORY_THUMBNAILS
+                thumbnailDirectory
             ).toString()
         }
 

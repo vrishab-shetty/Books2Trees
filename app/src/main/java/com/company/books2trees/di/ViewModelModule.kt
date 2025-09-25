@@ -1,10 +1,9 @@
 package com.company.books2trees.di
 
+import com.company.books2trees.domain.use_case.AddBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.AddPdfUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.ClosePdfUseCase
-import com.company.books2trees.domain.use_case.DeleteLibraryBookUseCase
-import com.company.books2trees.domain.use_case.DeletePdfUseCase
 import com.company.books2trees.domain.use_case.GetGenresUseCase
 import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
 import com.company.books2trees.domain.use_case.GetPdfPageBitmapUseCase
@@ -13,8 +12,9 @@ import com.company.books2trees.domain.use_case.GetProfileContentUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.GetSearchFilterUseCase
 import com.company.books2trees.domain.use_case.GetSignedInUserUseCase
-import com.company.books2trees.domain.use_case.InsertBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.OpenPdfUseCase
+import com.company.books2trees.domain.use_case.RemoveLibraryBookUseCase
+import com.company.books2trees.domain.use_case.RemovePdfUseCase
 import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
 import com.company.books2trees.domain.use_case.SearchBooksUseCase
 import com.company.books2trees.domain.use_case.SetSearchFilterUseCase
@@ -40,7 +40,7 @@ val viewModelModule = module {
             getRecentBooks = get<GetRecentBooksUseCase>(),
             addRecentBook = get<AddRecentBookUseCase>(),
             removeRecentBook = get<RemoveRecentBookUseCase>(),
-            insertBookToLibrary = get<InsertBookToLibraryUseCase>()
+            insertBookToLibrary = get<AddBookToLibraryUseCase>()
         )
     }
 
@@ -49,7 +49,7 @@ val viewModelModule = module {
         ProfileViewModel(
             getProfileContent = get<GetProfileContentUseCase>(),
             addRecentBook = get<AddRecentBookUseCase>(),
-            deleteLibraryBook = get<DeleteLibraryBookUseCase>(),
+            deleteLibraryBook = get<RemoveLibraryBookUseCase>(),
             updateLibraryItem = get<UpdateLibraryItemUseCase>()
         )
     }
@@ -86,7 +86,7 @@ val viewModelModule = module {
         InfoViewModel(
             get<GetPdfsUseCase>(),
             get<AddPdfUseCase>(),
-            get<DeletePdfUseCase>()
+            get<RemovePdfUseCase>()
         )
     }
 
