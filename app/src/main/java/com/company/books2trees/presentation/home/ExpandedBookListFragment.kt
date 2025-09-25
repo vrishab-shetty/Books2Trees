@@ -66,7 +66,7 @@ class ExpandedBookListFragment : ViewBindingBottomSheetDialogFragment<HomeBookIt
     }
 
     override fun openBook(model: BookModel) {
-        vm.onBookClicked(model)
+        vm.onBookOpened(model)
         dismiss()
     }
 

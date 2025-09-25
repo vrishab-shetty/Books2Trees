@@ -1,6 +1,5 @@
 package com.company.books2trees.di
 
-import com.company.books2trees.domain.ads.AdManager
 import com.company.books2trees.domain.use_case.AddPdfUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.ClosePdfUseCase
@@ -41,8 +40,7 @@ val viewModelModule = module {
             getRecentBooks = get<GetRecentBooksUseCase>(),
             addRecentBook = get<AddRecentBookUseCase>(),
             removeRecentBook = get<RemoveRecentBookUseCase>(),
-            insertBookToLibrary = get<InsertBookToLibraryUseCase>(),
-            adManager = get<AdManager>()
+            insertBookToLibrary = get<InsertBookToLibraryUseCase>()
         )
     }
 

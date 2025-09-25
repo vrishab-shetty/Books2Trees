@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.databinding.FragmentHomeBinding
 import com.company.books2trees.domain.ads.AdManager
+import com.company.books2trees.domain.ads.AdShowResult
 import com.company.books2trees.domain.model.BookModel
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.home.adapter.HomeAdapter
@@ -39,7 +40,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
         setupPageList()
         observeViewModel()
-        observeNavigationEvents()
 
     }
 
@@ -75,10 +75,34 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                 }
 
                 override fun openBook(model: BookModel) {
-                    vm.onBookClicked(model)
+                    showAdForBook(model)
                 }
+
             }
         )
+    }
+
+    private fun showAdForBook(book: BookModel) {
+        lifecycleScope.launch {
+            val bookUrl = book.url ?: return@launch
+            val result = adManager.showAd(requireActivity())
+
+            when (result) {
+                is AdShowResult.Success -> {
+                    if (result.rewardGranted) {
+                        // If successful, open the URL and notify the ViewModel
+                        openUrl(bookUrl)
+                        vm.onBookOpened(book)
+                    }
+
+                }
+
+                is AdShowResult.AdNotReady -> {
+                    Toast.makeText(context, "Ad not ready. Try again later.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
     }
 
     private fun observeViewModel() {
@@ -91,30 +115,6 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                     }
                     if (viewState is HomeViewState.Content) {
                         updateAdapterList(viewState)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun observeNavigationEvents() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.navigationEvent.collect { event ->
-                    when (event) {
-                        is NavigationEvent.ShowAdAndOpenUrl -> {
-                            adManager.showAd(requireActivity()) { wasRewardGranted ->
-                                if (wasRewardGranted) openUrl(event.url)
-                            }
-                        }
-
-                        is NavigationEvent.ShowToastMessage -> {
-                            Toast.makeText(
-                                context,
-                                event.message,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
                     }
                 }
             }
