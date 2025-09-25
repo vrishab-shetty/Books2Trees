@@ -4,10 +4,10 @@ import com.company.books2trees.data.local.database.BookDatabase
 import com.company.books2trees.data.local.database.dao.LibraryBookDao
 import com.company.books2trees.data.local.database.dao.RecentBookDao
 import com.company.books2trees.data.local.datasource.api.LibraryLocalDataSource
-import com.company.books2trees.data.local.datasource.api.PdfLocalDataSourceImpl
+import com.company.books2trees.data.local.datasource.api.PdfLocalDataSource
 import com.company.books2trees.data.local.datasource.api.RecentBooksLocalDataSource
 import com.company.books2trees.data.local.datasource.impl.LibraryLocalDataSourceImpl
-import com.company.books2trees.data.local.datasource.impl.PdfLocalDataSource
+import com.company.books2trees.data.local.datasource.impl.PdfLocalDataSourceImpl
 import com.company.books2trees.data.local.datasource.impl.RecentBooksLocalDataSourceImpl
 import com.company.books2trees.data.local.files.FileUtil
 import com.company.books2trees.data.local.files.pdf.PdfPageProviderFactory

@@ -2,7 +2,7 @@ package com.company.books2trees.data.repository
 
 import android.net.Uri
 import androidx.core.net.toUri
-import com.company.books2trees.data.local.datasource.impl.PdfLocalDataSource
+import com.company.books2trees.data.local.datasource.api.PdfLocalDataSource
 import com.company.books2trees.data.local.files.FileUtil
 import com.company.books2trees.data.local.files.pdf.PdfPageProviderFactory
 import com.company.books2trees.data.local.model.PdfItem

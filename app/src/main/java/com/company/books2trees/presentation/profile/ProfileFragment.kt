@@ -160,7 +160,4 @@ class ProfileFragment :
         }
     }
 
-    private fun deleteBook(model: BookModel) {
-        vm.onDeleteBookClicked(model.id)
-    }
 }

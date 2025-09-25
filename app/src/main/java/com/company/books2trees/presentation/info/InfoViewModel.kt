@@ -53,7 +53,7 @@ class InfoViewModel(
 
     fun onDeletePdf(model: PdfModel) {
         viewModelScope.launch {
-            removePdfUseCase(model)
+            removePdfUseCase(model.id)
         }
     }
 }

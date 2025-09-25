@@ -1,32 +1,27 @@
 package com.company.books2trees.data.local.datasource.api
 
-import com.company.books2trees.data.local.datasource.impl.PdfLocalDataSource
 import com.company.books2trees.data.local.model.PdfItem
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.withContext
 
-class PdfLocalDataSourceImpl : PdfLocalDataSource {
-    private val pdfsFlow = MutableStateFlow<Map<String, PdfItem>>(emptyMap())
+interface PdfLocalDataSource {
+    /**
+     * Gets a reactive stream of all locally stored PDF items.
+     */
+    fun getItems(): Flow<List<PdfItem>>
 
-    override fun getItems(): Flow<List<PdfItem>> = pdfsFlow.map { it.values.toList() }
+    /**
+     * Inserts a new PDF item into the local data source.
+     */
+    suspend fun insertPdf(entity: PdfItem)
 
-    override suspend fun insertPdf(entity: PdfItem) = withContext(Dispatchers.IO) {
-        pdfsFlow.update { currentMap ->
-            currentMap + (entity.id to entity)
-        }
-    }
+    /**
+     * Deletes a PDF item from the local data source by its ID.
+     */
+    suspend fun deletePdf(modelId: String)
 
-    override suspend fun deletePdf(modelId: String) = withContext(Dispatchers.IO) {
-        pdfsFlow.update { currentMap ->
-            currentMap - modelId
-        }
-    }
-
-    override suspend fun findItemById(id: String): PdfItem? = withContext(Dispatchers.IO) {
-        pdfsFlow.value[id]
-    }
+    /**
+     * Finds a specific PDF item by its ID.
+     * @return The PdfItem if found, otherwise null.
+     */
+    suspend fun findItemById(id: String): PdfItem?
 }
