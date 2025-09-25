@@ -1,20 +1,13 @@
 package com.company.books2trees.presentation.profile
 
 import androidx.recyclerview.widget.DiffUtil
-import com.company.books2trees.data.local.database.model.LibraryBookEntity
+import com.company.books2trees.domain.model.CategoryId
+import com.company.books2trees.domain.model.LibraryBookModel
 
 data class LibraryPageItem(
     val categoryId: CategoryId,
-    val items: List<LibraryBookEntity>
+    val items: List<LibraryBookModel>
 ) {
-    enum class CategoryId {
-        None,
-        Reading,
-        PlanToRead,
-        Dropped,
-        Completed,
-        OnHold
-    }
 
     class DiffCallback(
         private val oldList: List<LibraryPageItem>,
@@ -31,7 +24,5 @@ data class LibraryPageItem(
             oldList[oldItemPosition] == newList[newItemPosition]
 
     }
-
-
 }
 

@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.R
-import com.company.books2trees.data.local.database.model.LibraryBookEntity
 import com.company.books2trees.databinding.LibraryViewpagerBinding
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.CategoryId
+import com.company.books2trees.domain.model.LibraryBookModel
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.presentation.home.callbacks.OnBookLongPressed
 import com.company.books2trees.presentation.profile.LibraryPageItem
@@ -39,7 +40,7 @@ class ViewPagerAdapter(
 
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
-        val item = pages[LibraryPageItem.CategoryId.entries[position + privatePage]]
+        val item = pages[CategoryId.entries[position + privatePage]]
         item?.let {
             holder.bind(it)
         }
@@ -114,7 +115,7 @@ class ViewPagerAdapter(
     ) : ViewHolder(binding.root), OnBookLongPressed {
 
 
-        fun bind(page: List<LibraryBookEntity>) {
+        fun bind(page: List<LibraryBookModel>) {
             binding.pageRecyclerview.apply {
                 adapter?.let {
                     (adapter as? PageAdapter)?.updateList(page)
@@ -131,7 +132,7 @@ class ViewPagerAdapter(
                 Pair(index, value)
             }) {
                 val item =
-                    pages[LibraryPageItem.CategoryId.entries[adapterPosition + privatePage]]?.find {
+                    pages[CategoryId.entries[adapterPosition + privatePage]]?.find {
                         it.id == model.id
                     }
 
@@ -142,13 +143,13 @@ class ViewPagerAdapter(
                 when (itemId) {
                     0 -> {
                         viewModel.onChangedCategory(item.apply {
-                            categoryId = LibraryPageItem.CategoryId.Dropped
+                            categoryId = CategoryId.Dropped
                         })
                     }
 
                     1 -> {
                         viewModel.onChangedCategory(item.apply {
-                            categoryId = LibraryPageItem.CategoryId.OnHold
+                            categoryId = CategoryId.OnHold
                         })
                     }
 

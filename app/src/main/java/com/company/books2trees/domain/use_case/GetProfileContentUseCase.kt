@@ -1,8 +1,8 @@
 package com.company.books2trees.domain.use_case
 
+import com.company.books2trees.domain.model.CategoryId
 import com.company.books2trees.domain.repository.LibraryRepository
 import com.company.books2trees.presentation.profile.LibraryPageItem
-import com.company.books2trees.presentation.profile.LibraryPageItem.CategoryId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

@@ -2,8 +2,8 @@ package com.company.books2trees.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.company.books2trees.data.local.database.model.LibraryBookEntity
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.LibraryBookModel
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.GetProfileContentUseCase
 import com.company.books2trees.domain.use_case.RemoveLibraryBookUseCase
@@ -60,7 +60,7 @@ class ProfileViewModel(
         }
     }
 
-    fun onChangedCategory(item: LibraryBookEntity) {
+    fun onChangedCategory(item: LibraryBookModel) {
         viewModelScope.launch {
             updateLibraryItem(item)
         }
@@ -71,7 +71,7 @@ class ProfileViewModel(
         val sortedList = currentContent.toMutableList()
 
         sortedList[position] = sortedList[position].copy(
-            items = sortedList[position].items.sortedBy { it.title }
+            items = sortedList[position].items.sortedBy { it.name }
         )
         _pages.value = ProfileViewState.Content(list = sortedList)
     }
@@ -87,7 +87,7 @@ class ProfileViewModel(
 
         filteredList[position] = filteredList[position].copy(
             items = fullPageData[position].items.filter {
-                it.title.lowercase().contains(lowercaseQuery)
+                it.name.lowercase().contains(lowercaseQuery)
             }
         )
         _pages.value = ProfileViewState.Content(list = filteredList)

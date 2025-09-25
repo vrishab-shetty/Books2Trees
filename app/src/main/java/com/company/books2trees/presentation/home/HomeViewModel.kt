@@ -3,13 +3,13 @@ package com.company.books2trees.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.CategoryId
 import com.company.books2trees.domain.use_case.AddBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
 import com.company.books2trees.presentation.home.viewState.HomeViewState
-import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -71,7 +71,7 @@ class HomeViewModel(
         }
     }
 
-    fun insertToLibrary(model: BookModel, categoryId: LibraryPageItem.CategoryId) {
+    fun insertToLibrary(model: BookModel, categoryId: CategoryId) {
         viewModelScope.launch {
             insertBookToLibrary(model, categoryId)
         }

@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.company.books2trees.databinding.FragmentProfileBinding
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.CategoryId
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
 import com.company.books2trees.presentation.profile.adapter.ViewPagerAdapter
@@ -113,7 +114,7 @@ class ProfileFragment :
 
                             TabLayoutMediator(libraryTabLayout, viewPager) { tab, position ->
                                 tab.text =
-                                    LibraryPageItem.CategoryId.entries[position + 1].toString()
+                                    CategoryId.entries[position + 1].toString()
 
                                 tab.view.setOnClickListener {
                                     val currentItem = viewPager.currentItem

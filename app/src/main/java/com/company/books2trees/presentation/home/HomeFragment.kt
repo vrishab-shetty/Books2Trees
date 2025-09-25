@@ -15,12 +15,12 @@ import com.company.books2trees.databinding.FragmentHomeBinding
 import com.company.books2trees.domain.ads.AdManager
 import com.company.books2trees.domain.ads.AdShowResult
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.CategoryId
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.home.adapter.HomeAdapter
 import com.company.books2trees.presentation.home.adapter.HomePageList
 import com.company.books2trees.presentation.home.adapter.HomePageListItem
 import com.company.books2trees.presentation.home.viewState.HomeViewState
-import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -59,7 +59,7 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             layoutInflater, viewPool = viewPool,
             listener = object : HomeAdapter.Listener {
                 override fun onBookAddToFavorites(book: BookModel) {
-                    vm.insertToLibrary(book, LibraryPageItem.CategoryId.PlanToRead)
+                    vm.insertToLibrary(book, CategoryId.PlanToRead)
                 }
 
                 override fun onBookRemove(book: BookModel) {

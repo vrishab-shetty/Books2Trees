@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.company.books2trees.data.local.database.dao.LibraryBookDao
 import com.company.books2trees.data.local.database.dao.RecentBookDao
 import com.company.books2trees.data.local.database.model.LibraryBookEntity
@@ -22,7 +21,6 @@ private const val DATABASE_NAME = "books2trees.db"
     version = 1,
     exportSchema = false
 )
-@TypeConverters(Converters::class)
 abstract class BookDatabase : RoomDatabase() {
 
     abstract fun libraryBookDao(): LibraryBookDao
