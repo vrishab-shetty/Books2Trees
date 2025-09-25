@@ -23,14 +23,14 @@ import com.company.books2trees.presentation.home.viewState.HomeViewState
 import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val vm: HomeViewModel by viewModel()
-    private val adManager: AdManager by inject()
+    private val adManager: AdManager = get<AdManager>()
 
     private lateinit var homeAdapter: HomeAdapter
     private val viewPool = RecyclerView.RecycledViewPool()
