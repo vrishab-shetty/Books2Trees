@@ -6,7 +6,7 @@ interface AuthRepository {
 
     suspend fun signInWithGoogleToken(token: String): Result<UserData>
 
-    suspend fun signOut()
+    fun signOut()
 
     fun getSignedInUser(): UserData?
 }

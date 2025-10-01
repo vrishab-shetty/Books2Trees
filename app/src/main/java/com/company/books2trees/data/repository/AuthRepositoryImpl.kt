@@ -7,15 +7,19 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.concurrent.CancellationException
 
-class AuthRepositoryImpl(
-    private val auth: FirebaseAuth = Firebase.auth
-) : AuthRepository {
+class AuthRepositoryImpl() : AuthRepository {
 
-    override suspend fun signInWithGoogleToken(token: String): Result<UserData> {
-        return try {
+    private val auth: FirebaseAuth by lazy { Firebase.auth }
+
+    override suspend fun signInWithGoogleToken(token: String): Result<UserData> = withContext(
+        Dispatchers.IO
+    ) {
+        try {
             val credential = GoogleAuthProvider.getCredential(token, null)
             val authResult = auth.signInWithCredential(credential).await()
             val user = authResult.user
@@ -33,7 +37,7 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun signOut() {
+    override fun signOut() {
         try {
             auth.signOut()
         } catch (e: Exception) {

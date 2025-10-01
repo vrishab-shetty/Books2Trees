@@ -31,10 +31,13 @@ class SignInViewModel(
     }
 
     private fun checkActiveUserSession() {
-        val user = getSignedInUserUseCase()
-        if (user != null) {
-            _state.update { SignInState.Success(user) }
+        viewModelScope.launch {
+            val user = getSignedInUserUseCase()
+            if (user != null) {
+                _state.update { SignInState.Success(user) }
+            }
         }
+
     }
 
     fun signInWithGoogleToken(token: String) {
