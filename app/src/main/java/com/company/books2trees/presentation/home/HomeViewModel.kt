@@ -1,5 +1,6 @@
 package com.company.books2trees.presentation.home
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.domain.model.BookModel
@@ -8,7 +9,10 @@ import com.company.books2trees.domain.use_case.AddBookToLibraryUseCase
 import com.company.books2trees.domain.use_case.AddRecentBookUseCase
 import com.company.books2trees.domain.use_case.GetHomePageBooksUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
+import com.company.books2trees.domain.use_case.GrantReadingTimeUseCase
 import com.company.books2trees.domain.use_case.RemoveRecentBookUseCase
+import com.company.books2trees.presentation.home.viewState.AdUiState
+import com.company.books2trees.presentation.home.viewState.HomeEvent
 import com.company.books2trees.presentation.home.viewState.HomeViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,8 +24,12 @@ class HomeViewModel(
     private val getRecentBooks: GetRecentBooksUseCase,
     private val addRecentBook: AddRecentBookUseCase,
     private val removeRecentBook: RemoveRecentBookUseCase,
-    private val insertBookToLibrary: AddBookToLibraryUseCase
+    private val insertBookToLibrary: AddBookToLibraryUseCase,
+    private val grantReadingTimeUseCase: GrantReadingTimeUseCase
 ) : ViewModel() {
+
+    private val _adState = MutableStateFlow<AdUiState>(AdUiState.Idle)
+    val adState: StateFlow<AdUiState> = _adState
 
     private val _items: MutableStateFlow<HomeViewState> = MutableStateFlow(
         HomeViewState.Loading
@@ -59,19 +67,39 @@ class HomeViewModel(
         }
     }
 
-    fun onBookOpened(model: BookModel) {
-        viewModelScope.launch {
-            addRecentBook(model)
+    fun onEvent(event: HomeEvent) {
+        when (event) {
+            is HomeEvent.OpenBook -> onBookOpened(event.book, event.activity)
+            is HomeEvent.AddToLibrary -> insertToLibrary(event.book, event.categoryId)
+            is HomeEvent.RemoveFromRecents -> onRemoveClicked(event.book)
+            is HomeEvent.ExpandList -> {}
         }
     }
 
-    fun onRemoveClicked(model: BookModel) {
+    private fun onBookOpened(model: BookModel, activity: Activity) {
+        viewModelScope.launch {
+            _adState.value = AdUiState.Loading
+
+            val success = grantReadingTimeUseCase(activity)
+            _adState.value =
+                if (success) AdUiState.RewardGranted(model.url) else AdUiState.Error("Ad failed to show")
+
+            addRecentBook(model)
+        }
+
+    }
+
+    fun onAdFlowComplete() {
+        _adState.value = AdUiState.Idle
+    }
+
+    private fun onRemoveClicked(model: BookModel) {
         viewModelScope.launch {
             removeRecentBook(model.id)
         }
     }
 
-    fun insertToLibrary(model: BookModel, categoryId: CategoryId) {
+    private fun insertToLibrary(model: BookModel, categoryId: CategoryId) {
         viewModelScope.launch {
             insertBookToLibrary(model, categoryId)
         }

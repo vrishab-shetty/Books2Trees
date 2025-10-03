@@ -12,6 +12,7 @@ import com.company.books2trees.domain.use_case.GetProfileContentUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.GetSearchFilterUseCase
 import com.company.books2trees.domain.use_case.GetSignedInUserUseCase
+import com.company.books2trees.domain.use_case.GrantReadingTimeUseCase
 import com.company.books2trees.domain.use_case.OpenPdfUseCase
 import com.company.books2trees.domain.use_case.RemoveLibraryBookUseCase
 import com.company.books2trees.domain.use_case.RemovePdfUseCase
@@ -40,7 +41,8 @@ val viewModelModule = module {
             getRecentBooks = get<GetRecentBooksUseCase>(),
             addRecentBook = get<AddRecentBookUseCase>(),
             removeRecentBook = get<RemoveRecentBookUseCase>(),
-            insertBookToLibrary = get<AddBookToLibraryUseCase>()
+            insertBookToLibrary = get<AddBookToLibraryUseCase>(),
+            get<GrantReadingTimeUseCase>()
         )
     }
 

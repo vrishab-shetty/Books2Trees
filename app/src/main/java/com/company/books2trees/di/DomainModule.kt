@@ -2,6 +2,7 @@ package com.company.books2trees.di
 
 import com.company.books2trees.data.local.files.FileUtil
 import com.company.books2trees.data.local.files.pdf.PdfPageProviderFactory
+import com.company.books2trees.domain.repository.AdRepository
 import com.company.books2trees.domain.repository.AuthRepository
 import com.company.books2trees.domain.repository.BookSearchRepository
 import com.company.books2trees.domain.repository.LibraryRepository
@@ -20,6 +21,7 @@ import com.company.books2trees.domain.use_case.GetProfileContentUseCase
 import com.company.books2trees.domain.use_case.GetRecentBooksUseCase
 import com.company.books2trees.domain.use_case.GetSearchFilterUseCase
 import com.company.books2trees.domain.use_case.GetSignedInUserUseCase
+import com.company.books2trees.domain.use_case.GrantReadingTimeUseCase
 import com.company.books2trees.domain.use_case.OpenPdfUseCase
 import com.company.books2trees.domain.use_case.RemoveLibraryBookUseCase
 import com.company.books2trees.domain.use_case.RemovePdfUseCase
@@ -55,4 +57,5 @@ val domainModule = module {
     factory { GetPdfsUseCase(get<PdfRepository>()) }
     factory { AddPdfUseCase(get<PdfRepository>(), get<PdfPageProviderFactory>(), get<FileUtil>()) }
     factory { RemovePdfUseCase(get<PdfRepository>(), get<FileUtil>()) }
+    factory { GrantReadingTimeUseCase(get<AdRepository>()) }
 }
