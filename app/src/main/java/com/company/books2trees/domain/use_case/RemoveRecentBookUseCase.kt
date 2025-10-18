@@ -1,9 +1,9 @@
 package com.company.books2trees.domain.use_case
 
-import com.company.books2trees.domain.repository.BookRepository
+import com.company.books2trees.domain.repository.RecentBooksRepository
 
-class RemoveRecentBookUseCase(private val bookRepository: BookRepository) {
+class RemoveRecentBookUseCase(private val recentBooksRepository: RecentBooksRepository) {
     suspend operator fun invoke(id: String) {
-        bookRepository.removeRecentBook(id)
+        recentBooksRepository.removeRecentBook(id)
     }
 }

@@ -3,6 +3,8 @@ package com.company.books2trees.presentation.home
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import com.company.books2trees.R
 import com.company.books2trees.databinding.HomeBookItemExpandedBinding
 import com.company.books2trees.domain.model.BookModel
@@ -10,16 +12,15 @@ import com.company.books2trees.presentation.common.adapter.BookListAdapter
 import com.company.books2trees.presentation.common.base.ViewBindingBottomSheetDialogFragment
 import com.company.books2trees.presentation.common.views.GridSpacingItemDecoration
 import com.company.books2trees.presentation.home.callbacks.OnBookClicked
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class ExpandedBookListFragment : ViewBindingBottomSheetDialogFragment<HomeBookItemExpandedBinding>(
     HomeBookItemExpandedBinding::inflate // Pass the inflater
 ), OnBookClicked {
 
-    private val vm: HomeViewModel by sharedViewModel()
-
     companion object {
+        const val REQUEST_KEY = "bookSelectionRequest"
+        const val BUNDLE_KEY = "selectedBook"
         private const val ARG_TITLE = "arg_title"
         private const val ARG_BOOKS = "arg_books"
 
@@ -66,8 +67,7 @@ class ExpandedBookListFragment : ViewBindingBottomSheetDialogFragment<HomeBookIt
     }
 
     override fun openBook(model: BookModel) {
-        vm.onBookClicked(model)
+        setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY to model))
         dismiss()
     }
-
 }

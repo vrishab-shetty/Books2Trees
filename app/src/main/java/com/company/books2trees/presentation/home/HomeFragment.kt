@@ -5,31 +5,31 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.company.books2trees.databinding.FragmentHomeBinding
-import com.company.books2trees.domain.ads.AdManager
 import com.company.books2trees.domain.model.BookModel
+import com.company.books2trees.domain.model.CategoryId
+import com.company.books2trees.presentation.common.AdLoadingDialogFragment
 import com.company.books2trees.presentation.common.base.ViewBindingFragment
 import com.company.books2trees.presentation.home.adapter.HomeAdapter
 import com.company.books2trees.presentation.home.adapter.HomePageList
 import com.company.books2trees.presentation.home.adapter.HomePageListItem
+import com.company.books2trees.presentation.home.viewState.AdUiState
+import com.company.books2trees.presentation.home.viewState.HomeEvent
 import com.company.books2trees.presentation.home.viewState.HomeViewState
-import com.company.books2trees.presentation.profile.LibraryPageItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val vm: HomeViewModel by viewModel()
-    private val adManager: AdManager by inject()
 
     private lateinit var homeAdapter: HomeAdapter
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -39,8 +39,25 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
         setupPageList()
         observeViewModel()
-        observeNavigationEvents()
+        setupFragmentResultListener()
 
+    }
+
+    private fun setupFragmentResultListener() {
+        childFragmentManager.setFragmentResultListener(
+            ExpandedBookListFragment.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { requestKey, bundle ->
+            val selectedBook = BundleCompat.getParcelable(
+                bundle,
+                ExpandedBookListFragment.BUNDLE_KEY,
+                BookModel::class.java
+            )
+
+            selectedBook?.let { book ->
+                vm.onEvent(HomeEvent.OpenBook(book, requireActivity()))
+            }
+        }
     }
 
     private fun setupPageList() {
@@ -59,31 +76,32 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
             layoutInflater, viewPool = viewPool,
             listener = object : HomeAdapter.Listener {
                 override fun onBookAddToFavorites(book: BookModel) {
-                    vm.insertToLibrary(book, LibraryPageItem.CategoryId.PlanToRead)
+                    vm.onEvent(HomeEvent.AddToLibrary(book, CategoryId.PlanToRead))
                 }
 
                 override fun onBookRemove(book: BookModel) {
-                    vm.onRemoveClicked(book)
+                    vm.onEvent(HomeEvent.RemoveFromRecents(book))
                 }
 
                 override fun onListHeadingClicked(
                     title: String,
                     books: List<BookModel>
                 ) {
+                    vm.onEvent(HomeEvent.ExpandList(title, books))
                     ExpandedBookListFragment.newInstance(title, books)
                         .show(childFragmentManager, "ExpandedBookListFragment")
                 }
 
                 override fun openBook(model: BookModel) {
-                    vm.onBookClicked(model)
+                    vm.onEvent(HomeEvent.OpenBook(model, requireActivity()))
                 }
+
             }
         )
     }
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.items.collectLatest { viewState ->
                     useBinding { binding ->
                         binding.homeLoading.isVisible = viewState is HomeViewState.Loading
@@ -93,28 +111,34 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
                         updateAdapterList(viewState)
                     }
                 }
-            }
         }
-    }
 
-    private fun observeNavigationEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.navigationEvent.collect { event ->
-                    when (event) {
-                        is NavigationEvent.ShowAdAndOpenUrl -> {
-                            adManager.showAd(requireActivity()) { wasRewardGranted ->
-                                if (wasRewardGranted) openUrl(event.url)
-                            }
-                        }
+            vm.adState.collect { state ->
+                dismissLoadingDialog()
+                when (state) {
+                    is AdUiState.Idle -> {}
+                    is AdUiState.Loading -> {
+                        AdLoadingDialogFragment.newInstance().show(
+                            childFragmentManager, AdLoadingDialogFragment.TAG
+                        )
+                    }
 
-                        is NavigationEvent.ShowToastMessage -> {
-                            Toast.makeText(
-                                context,
-                                event.message,
-                                Toast.LENGTH_LONG
-                            ).show()
+                    is AdUiState.RewardGranted -> {
+                        state.url?.let {
+                            openUrl(it)
                         }
+                        vm.onAdFlowComplete()
+                    }
+
+                    is AdUiState.Error -> {
+                        Toast.makeText(
+                            context,
+                            "Ad not ready. Try again later.",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        vm.onAdFlowComplete()
                     }
                 }
             }
@@ -136,6 +160,12 @@ class HomeFragment : ViewBindingFragment<FragmentHomeBinding>(FragmentHomeBindin
 
     private fun openUrl(url: String) {
         startActivity(Intent(Intent.ACTION_VIEW).apply { data = url.toUri() })
+    }
+
+    private fun dismissLoadingDialog() {
+        val dialog =
+            childFragmentManager.findFragmentByTag(AdLoadingDialogFragment.TAG) as? DialogFragment
+        dialog?.dismiss()
     }
 
 }

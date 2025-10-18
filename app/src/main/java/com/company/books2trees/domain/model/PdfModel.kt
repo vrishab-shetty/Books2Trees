@@ -6,7 +6,7 @@ import java.util.UUID
 data class PdfModel(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
-    var thumbnail: String? = null,
+    var thumbnailPath: String? = null,
     val info: String? = null,
     val uri: Uri
 )

@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.company.books2trees.domain.model.PdfModel
 import com.company.books2trees.domain.use_case.AddPdfUseCase
-import com.company.books2trees.domain.use_case.DeletePdfUseCase
 import com.company.books2trees.domain.use_case.GetPdfsUseCase
+import com.company.books2trees.domain.use_case.RemovePdfUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +22,7 @@ sealed class PdfListViewState {
 class InfoViewModel(
     private val getPdfsUseCase: GetPdfsUseCase,
     private val addPdfUseCase: AddPdfUseCase,
-    private val deletePdfUseCase: DeletePdfUseCase
+    private val removePdfUseCase: RemovePdfUseCase
 ) : ViewModel() {
 
     private val _pdfList = MutableStateFlow<PdfListViewState>(PdfListViewState.Loading)
@@ -53,7 +53,7 @@ class InfoViewModel(
 
     fun onDeletePdf(model: PdfModel) {
         viewModelScope.launch {
-            deletePdfUseCase(model)
+            removePdfUseCase(model.id)
         }
     }
 }

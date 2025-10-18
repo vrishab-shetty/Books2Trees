@@ -1,12 +1,12 @@
 package com.company.books2trees.domain.use_case
 
-import com.company.books2trees.data.local.library.model.LibraryItem
-import com.company.books2trees.domain.repository.BookRepository
+import com.company.books2trees.domain.model.LibraryBookModel
+import com.company.books2trees.domain.repository.LibraryRepository
 
 class UpdateLibraryItemUseCase(
-    private val bookRepository: BookRepository
+    private val libraryRepository: LibraryRepository
 ) {
-    suspend operator fun invoke(item: LibraryItem) {
-        bookRepository.updateLibraryBook(item)
+    suspend operator fun invoke(item: LibraryBookModel) {
+        libraryRepository.updateLibraryBook(item)
     }
 }

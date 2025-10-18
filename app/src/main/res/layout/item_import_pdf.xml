@@ -31,7 +31,7 @@
 
                 <ImageView
                     android:id="@+id/pdf_preview"
-                    app:imageUrl="@{model.thumbnail}"
+                    app:imageUrl="@{model.thumbnailPath}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/book_caption"

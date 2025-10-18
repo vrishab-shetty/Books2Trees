@@ -93,6 +93,7 @@ class SettingsFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             vm.userData.collect { viewState ->
                 when (viewState) {
+                    is SettingsViewState.Loading -> {}
                     is SettingsViewState.Content -> {
                         val userData = viewState.data
                         bindUserData(userData)
